@@ -31,3 +31,10 @@
 
 # "temporary" build files
 /target
+
+# grails
+.idea
+.gradle
+
+
+

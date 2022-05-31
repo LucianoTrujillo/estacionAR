@@ -45,7 +45,7 @@ class App extends Component {
             <Row key={2}>
                 <div id="content">
                     <section className="row colset-2-its">
-                        <h1 style={{textAlign: 'center'}}>Welcome to Grails</h1>
+                        <h1 style={{textAlign: 'center'}}>Welcome to Grailsaaa</h1>
                         <br/>
                         <p>
                             Congratulations, you have successfully started your Grails & React application! While in
