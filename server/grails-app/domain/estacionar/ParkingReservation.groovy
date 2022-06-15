@@ -6,13 +6,19 @@ class ParkingReservation {
     TimeFrame reserveTimeFrame
     ParkingLocation parkingLocation
     Driver driver
+    Receipt receipt
+
 
     static constraints = {
     }
 
-    static def from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
+    static def Optional<Infrigement> from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
         if (validator.canMakeReservation(location, reserveTimeFrame)) {
-            new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver)
+            Receipt receipt = new Receipt(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver);
+            ParkingReservation newParkingReservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver, receipt: receipt)
+            return Optional.from(newParkingReservation);
+        } else {
+            return Optional.empty();
         }
     }
 
@@ -22,5 +28,9 @@ class ParkingReservation {
 
     boolean isValidAt(LocalTime dateTime){
         reserveTimeFrame.contains(dateTime)
+    }
+
+    boolean isValidIn(ParkingLocation location){
+        this.parkingLocation == location
     }
 }
