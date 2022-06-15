@@ -15,8 +15,8 @@ class TimeFrame {
         startTime <= range.startTime && endTime >= range.endTime
     }
 
-    boolean contains(LocalTime dateTime){
-        startTime <= dateTime && endTime >= dateTime
+    boolean contains(LocalTime time){
+        startTime <= time && endTime >= time
     }
 
 }

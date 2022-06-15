@@ -6,14 +6,12 @@ class ParkingReservation {
     TimeFrame reserveTimeFrame
     ParkingLocation parkingLocation
     Driver driver
-    ParkingReceipt receipt
-
 
     static constraints = {
     }
 
-    static ParkingReservation from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
-        if (validator.canMakeReservation(location, reserveTimeFrame)) {
+    static ParkingReservation from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingReservationValidator validator){
+        if (validator.reservationCanBeMadeFrom(location, reserveTimeFrame)) {
             ParkingReservation newParkingReservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver)
             return newParkingReservation;
         } else {
@@ -25,8 +23,8 @@ class ParkingReservation {
         this.driver == driver // Tiene ID null, averiguar por que
     }
 
-    boolean isValidAt(LocalTime dateTime){
-        reserveTimeFrame.contains(dateTime)
+    boolean isValidAt(LocalTime time){
+        reserveTimeFrame.contains(time)
     }
 
     boolean isValidIn(ParkingLocation location){

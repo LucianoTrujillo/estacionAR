@@ -27,7 +27,7 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
                 endTime: LocalTime.of(5, 0))
 
         StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: availableParkingTimeFrame)
-        ParkingValidator parkingValidator = new ParkingValidator(streetValidations: [streetValidation])
+        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "driver tries to make reservation on 'Siempre Viva' from 04:00AM to 04:30AM"
         ParkingLocation reservationLocation = new ParkingLocation(
@@ -51,7 +51,7 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
                 endTime: LocalTime.of(5, 0))
 
         StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: availableParkingTimeFrame)
-        ParkingValidator parkingValidator = new ParkingValidator(streetValidations: [streetValidation])
+        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "driver tries to make reservation on 'Siempre Viva' from 06:00AM to 07:00AM"
         ParkingLocation reservationLocation = new ParkingLocation(
