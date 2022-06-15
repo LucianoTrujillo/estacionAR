@@ -25,7 +25,7 @@ class ParkingValidatorSpec extends Specification implements DomainUnitTest<Parki
             parkingValidator.canMakeReservation(location, dateTime)
     }
 
-    void "test canMakeReservation: given street validator does NOT allow to park in requested street, parking validator is asked if a reservation can be made, then return false"() {
+    void "test canNotMakeReservation: given street validator does NOT allow to park in requested street, parking validator is asked if a reservation can be made, then return false"() {
         LocalTime start = LocalTime.of( 0, 0)
         LocalTime end = LocalTime.of( 0, 0)
         TimeFrame dateTimeFrame = new TimeFrame(startTime: start, endTime: end)
