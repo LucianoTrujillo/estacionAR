@@ -2,9 +2,11 @@ package estacionar
 
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
+import java.time.LocalTime
 
 class ParkingReservationSpec extends Specification implements DomainUnitTest<ParkingReservation> {
 
+    Driver driver;
     def setup() {
         driver = new Driver(
                 name: "Pocho",
@@ -28,9 +30,9 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
         )
         StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
         ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
-        ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, timeFrame, parkingValidator)
+        ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, timeFrame, parkingValidator).get()
 
-        assert(reservation.isValidIn(parkingLocation) && reservation.isValidAt(timeFrame) && reservation.isFromDriver(driver));
+        assert(reservation.isValidIn(parkingLocation) && reservation.isValidAt(LocalTime.of(4, 0)) && reservation.isFromDriver(driver));
     }
 
     void "test aReservationCannotBeCreated: given that the location and timeframe are not valid, when a driver wants to make a parking reservation, then it is not created"() {
@@ -48,8 +50,8 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
         LocalTime endInvalid = LocalTime.of(7, 0)
         TimeFrame timeFrameInvalid = new TimeFrame(startTime: startInvalid, endTime: endInvalid)
 
-        ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, timeFrameInvalid, parkingValidator)
-        assertThat(reservation).isEmpty();
+        Optional<ParkingReservation> reservation = driver.reserveParkingAt(parkingLocation, timeFrameInvalid, parkingValidator)
+        assert(!reservation.isPresent());
     }
 
 }

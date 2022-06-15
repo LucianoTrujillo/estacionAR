@@ -6,17 +6,16 @@ class ParkingReservation {
     TimeFrame reserveTimeFrame
     ParkingLocation parkingLocation
     Driver driver
-    Receipt receipt
+    ParkingReceipt receipt
 
 
     static constraints = {
     }
 
-    static def Optional<Infrigement> from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
+    static Optional<ParkingReservation> from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
         if (validator.canMakeReservation(location, reserveTimeFrame)) {
-            Receipt receipt = new Receipt(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver);
-            ParkingReservation newParkingReservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver, receipt: receipt)
-            return Optional.from(newParkingReservation);
+            ParkingReservation newParkingReservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver)
+            return Optional.of(newParkingReservation);
         } else {
             return Optional.empty();
         }
