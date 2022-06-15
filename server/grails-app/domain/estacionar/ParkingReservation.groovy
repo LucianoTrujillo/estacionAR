@@ -1,32 +1,26 @@
 package estacionar
-import java.time.LocalDateTime
+import java.time.LocalTime
 
 class ParkingReservation {
 
-    LocalDateTimeFrame reserveTimeFrame
-    ParkingBlock parkingBlock
+    TimeFrame reserveTimeFrame
+    ParkingLocation parkingLocation
     Driver driver
 
     static constraints = {
     }
 
-    static ParkingReservation from(Driver driver, ParkingBlock parkingBlock, LocalDateTimeFrame reserveTimeFrame, DailyBlockReservations dailyBlockReservations){
-        def reservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingBlock: parkingBlock, driver: driver)
-        dailyBlockReservations.add(reservation)
-        reservation
+    static def from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
+        if (validator.canMakeReservation(location, reserveTimeFrame)) {
+            new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver)
+        }
     }
 
     boolean isFromDriver(Driver driver){
         this.driver == driver
     }
 
-    boolean notExpiredAt(LocalDateTime dateTime){
+    boolean notExpiredAt(LocalTime dateTime){
         reserveTimeFrame.contains(dateTime)
     }
-
-    boolean isValidAt(LocalDateTime timeFrame) {
-        reserveTimeFrame.contains(timeFrame);
-    }
-
-
 }

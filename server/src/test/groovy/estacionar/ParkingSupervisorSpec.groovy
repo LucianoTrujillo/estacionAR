@@ -3,13 +3,12 @@ package estacionar
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-import java.time.LocalDateTime
+import java.time.LocalTime
 
 class ParkingSupervisorSpec extends Specification implements DomainUnitTest<ParkingSupervisor> {
 
     ParkingSupervisor supervisor
     Driver driver
-    DailyBlockReservations dailyBlockReservations
 
     def setup() {
         supervisor = new ParkingSupervisor(license: "AAA 000")
@@ -25,20 +24,21 @@ class ParkingSupervisorSpec extends Specification implements DomainUnitTest<Park
     def cleanup() {
     }
 
-    void "test driverHasReservation: given driver has reserved parking, when sueprvisor asks if has reservation, then return true "() {
-        LocalDateTime start = LocalDateTime.of(2022, 1, 1, 0, 0)
-        LocalDateTime end = LocalDateTime.of(2022, 1, 1, 2, 0)
-
-        LocalDateTimeFrame localDateTimeFrame = new LocalDateTimeFrame(startTime: start, endTime: end)
-        ParkingBlock block = new ParkingBlock(
-                availableParkingTimeFrame: localDateTimeFrame,
-                vehicleCapacity: 1,
-                boundingStreets: ["a", "b", "c", "d"]
+    void "test driverHasReservation: given driver has reserved parking, when supervisor asks if has reservation, then return true "() {
+        LocalTime start = LocalTime.of(0, 0)
+        LocalTime end = LocalTime.of(0, 0)
+        TimeFrame localDateTimeFrame = new TimeFrame(startTime: start, endTime: end)
+        ParkingLocation parkingLocation = new ParkingLocation(
+                streetName: "Siempre Viva",
+                streetNumber: 123
         )
-        dailyBlockReservations = new DailyBlockReservations(block: block, reservations: [])
-        ParkingReservation.from(driver, block, localDateTimeFrame, dailyBlockReservations)
+        StreetValidator validator = new StreetValidator(restrictingStreets: ["Siempre Viva"], availableTimeFrameRightSide: localDateTimeFrame)
+        ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
+        def parkingReservation = ParkingReservation.from(driver, parkingLocation, localDateTimeFrame, parkingValidator)
 
         expect:"driver has reservation"
-            supervisor.driverHasReservation(driver, LocalDateTime.of(2022, 1, 1, 1, 0), dailyBlockReservations)
+            supervisor.driverHasReservation(driver, LocalTime.of(0, 0), [parkingReservation])
     }
+
+
 }

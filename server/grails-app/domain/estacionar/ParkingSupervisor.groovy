@@ -1,5 +1,5 @@
 package estacionar
-import java.time.LocalDateTime
+import java.time.LocalTime
 
 class ParkingSupervisor {
 
@@ -9,7 +9,7 @@ class ParkingSupervisor {
 
     }
 
-    boolean driverHasReservation(Driver driver, LocalDateTime dateTime, DailyBlockReservations dailyBlockReservations){
-        dailyBlockReservations.getActiveReservationFrom(driver, dateTime) != null
+    boolean driverHasReservation(Driver driver, LocalTime dateTime, List<ParkingReservation> dailyReservations){
+        dailyReservations.any {it.isFromDriver(driver) && it.notExpiredAt(dateTime)}
     }
 }

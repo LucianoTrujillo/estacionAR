@@ -1,21 +1,21 @@
 package estacionar
-import java.time.LocalDateTime
+import java.time.LocalTime
 
-class LocalDateTimeFrame {
+class TimeFrame {
 
-    LocalDateTime startTime
-    LocalDateTime endTime
+    LocalTime startTime
+    LocalTime endTime
 
     static constraints = {
         startTime nullable: false
         endTime nullable: false
     }
 
-    boolean contains(LocalDateTimeFrame range){
+    boolean contains(TimeFrame range){
         startTime <= range.startTime && endTime >= range.endTime
     }
 
-    boolean contains(LocalDateTime dateTime){
+    boolean contains(LocalTime dateTime){
         startTime <= dateTime && endTime >= dateTime
     }
 
