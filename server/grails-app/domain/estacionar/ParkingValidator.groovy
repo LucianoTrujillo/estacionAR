@@ -8,28 +8,29 @@ class ParkingValidator {
     }
 
     boolean canMakeReservation(ParkingLocation location, TimeFrame timeFrame){
-        !validators.any { !it.isValid(location, timeFrame) }
+        !validators.any { it.failsValidation(location, timeFrame) }
     }
 }
 
 
 class StreetValidator {
-    List<String> restrictingStreets
+    List<String> streetsToValidate
     TimeFrame availableTimeFrameRightSide
     TimeFrame availableTimeFrameLeftSide
 
-    boolean canParkInSideAtTime(ParkingLocation.LocationSide side, TimeFrame timeFrame) {
-        if(side == ParkingLocation.LocationSide.LEFT && !availableTimeFrameLeftSide.contains(timeFrame)) {
-            return false
-        }
-        if(side == ParkingLocation.LocationSide.RIGHT && !availableTimeFrameRightSide.contains(timeFrame)) {
-            return false
-        }
-
-        true
+    boolean canParkOnLeftSide(ParkingLocation location, TimeFrame timeFrame){
+        location.isLeftSide() && availableTimeFrameLeftSide.contains(timeFrame)
     }
 
-    boolean isValid(ParkingLocation location, TimeFrame timeFrame){
-        !restrictingStreets.contains(location.streetName) || canParkInSideAtTime(location.getSide(), timeFrame)
+    boolean canParkOnRightSide(ParkingLocation location, TimeFrame timeFrame){
+        location.isRightSide() && availableTimeFrameRightSide.contains(timeFrame)
+    }
+
+    boolean canParkAtTime(ParkingLocation location, TimeFrame timeFrame) {
+        canParkOnLeftSide(location, timeFrame) || canParkOnRightSide(location, timeFrame)
+    }
+
+    boolean failsValidation(ParkingLocation location, TimeFrame timeFrame){
+        streetsToValidate.contains(location.streetName) && !canParkAtTime(location, timeFrame)
     }
 }

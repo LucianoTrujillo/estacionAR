@@ -26,19 +26,40 @@ class ParkingSupervisorSpec extends Specification implements DomainUnitTest<Park
 
     void "test driverHasReservation: given driver has reserved parking, when supervisor asks if has reservation, then return true "() {
         LocalTime start = LocalTime.of(0, 0)
-        LocalTime end = LocalTime.of(0, 0)
-        TimeFrame localDateTimeFrame = new TimeFrame(startTime: start, endTime: end)
+        LocalTime end = LocalTime.of(5, 0)
+        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
         ParkingLocation parkingLocation = new ParkingLocation(
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        StreetValidator validator = new StreetValidator(restrictingStreets: ["Siempre Viva"], availableTimeFrameRightSide: localDateTimeFrame)
+        StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
         ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
-        def parkingReservation = ParkingReservation.from(driver, parkingLocation, localDateTimeFrame, parkingValidator)
-
+        ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, timeFrame, parkingValidator)
         expect:"driver has reservation"
-            supervisor.driverHasReservation(driver, LocalTime.of(0, 0), [parkingReservation])
+            supervisor.driverHasReservation(driver, LocalTime.of(3, 0), [reservation])
     }
 
+    void "test driverHasReservation: given driver has reserved parking, when supervisor asks if has reservation, then return false"() {
+        LocalTime start = LocalTime.of(0, 0)
+        LocalTime end = LocalTime.of(5, 0)
+        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
+        ParkingLocation parkingLocation = new ParkingLocation(
+                streetName: "Siempre Viva",
+                streetNumber: 123
+        )
+        StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
+        ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
+        ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, timeFrame, parkingValidator)
+
+        Driver driverThatDidNotReserveParking = new Driver(
+                name: "Pocho",
+                dni: "42822222",
+                address: "siempre viva 1234",
+                email: "pochito@gmail.com",
+                licensePlate: "BBB 111"
+        )
+        expect:"driver has reservation"
+        !supervisor.driverHasReservation(driverThatDidNotReserveParking, LocalTime.of(3, 0), [reservation])
+    }
 
 }

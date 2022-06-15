@@ -15,7 +15,7 @@ class ParkingValidatorSpec extends Specification implements DomainUnitTest<Parki
 
     void "test canMakeReservation: given street validator does not validate requested street, when parking validator is asked if a reservation can be made, then return true"() {
 
-        StreetValidator validator = new StreetValidator(restrictingStreets: ["Not Siempre Viva"])
+        StreetValidator validator = new StreetValidator(streetsToValidate: ["Not Siempre Viva"])
         ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
         ParkingLocation location = new ParkingLocation(streetName: "Siempre Viva", streetNumber: 123)
         LocalTime start = LocalTime.of( 0, 0)
@@ -29,7 +29,7 @@ class ParkingValidatorSpec extends Specification implements DomainUnitTest<Parki
         LocalTime start = LocalTime.of( 0, 0)
         LocalTime end = LocalTime.of( 0, 0)
         TimeFrame dateTimeFrame = new TimeFrame(startTime: start, endTime: end)
-        StreetValidator validator = new StreetValidator(restrictingStreets: ["Siempre Viva"], availableTimeFrameRightSide: dateTimeFrame)
+        StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: dateTimeFrame)
         ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
         ParkingLocation location = new ParkingLocation(streetName: "Siempre Viva", streetNumber: 123)
         start = LocalTime.of( 20, 0)
@@ -37,6 +37,20 @@ class ParkingValidatorSpec extends Specification implements DomainUnitTest<Parki
         TimeFrame dateTime = new TimeFrame(startTime: start, endTime: end)
         expect:"fix me"
         !parkingValidator.canMakeReservation(location, dateTime)
+    }
+
+    void "test canMakeReservation: given street validator does allow to park in requested street, parking validator is asked if a reservation can be made, then return true"() {
+        LocalTime start = LocalTime.of( 0, 0)
+        LocalTime end = LocalTime.of( 10, 0)
+        TimeFrame dateTimeFrame = new TimeFrame(startTime: start, endTime: end)
+        StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: dateTimeFrame)
+        ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
+        ParkingLocation location = new ParkingLocation(streetName: "Siempre Viva", streetNumber: 123)
+        start = LocalTime.of( 8, 0)
+        end = LocalTime.of(9, 0)
+        TimeFrame dateTime = new TimeFrame(startTime: start, endTime: end)
+        expect:"fix me"
+        parkingValidator.canMakeReservation(location, dateTime)
     }
 
 }

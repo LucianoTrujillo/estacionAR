@@ -17,10 +17,10 @@ class ParkingReservation {
     }
 
     boolean isFromDriver(Driver driver){
-        this.driver == driver
+        this.driver == driver // Tiene ID null, averiguar por que
     }
 
-    boolean notExpiredAt(LocalTime dateTime){
+    boolean isValidAt(LocalTime dateTime){
         reserveTimeFrame.contains(dateTime)
     }
 }

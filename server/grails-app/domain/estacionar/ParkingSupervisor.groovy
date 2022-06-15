@@ -10,6 +10,6 @@ class ParkingSupervisor {
     }
 
     boolean driverHasReservation(Driver driver, LocalTime dateTime, List<ParkingReservation> dailyReservations){
-        dailyReservations.any {it.isFromDriver(driver) && it.notExpiredAt(dateTime)}
+        dailyReservations.any {it.isFromDriver(driver) && it.isValidAt(dateTime)}
     }
 }

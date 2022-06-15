@@ -24,4 +24,12 @@ class ParkingLocation {
         }
     }
 
+    boolean isLeftSide(){
+        getSide() == LocationSide.LEFT
+    }
+
+    boolean isRightSide(){
+        getSide() == LocationSide.RIGHT
+    }
+
 }

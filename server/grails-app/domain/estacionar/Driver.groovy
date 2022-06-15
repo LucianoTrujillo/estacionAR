@@ -16,4 +16,7 @@ class Driver {
         licensePlate blank: false, nullable: false
     }
 
+    def reserveParkingAt(ParkingLocation parkingLocation,TimeFrame timeFrame, ParkingValidator parkingValidator) {
+        ParkingReservation.from(this, parkingLocation, timeFrame, parkingValidator)
+    }
 }
