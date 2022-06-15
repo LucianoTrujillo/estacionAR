@@ -2,18 +2,18 @@ package estacionar
 
 class ParkingValidator {
 
-    List<StreetValidator> validators
+    List<StreetValidation> streetValidations
 
     static constraints = {
     }
 
     boolean canMakeReservation(ParkingLocation location, TimeFrame timeFrame){
-        !validators.any { it.failsValidation(location, timeFrame) }
+        !streetValidations.any { it.failsValidation(location, timeFrame) }
     }
 }
 
 
-class StreetValidator {
+class StreetValidation {
     List<String> streetsToValidate
     TimeFrame availableTimeFrameRightSide
     TimeFrame availableTimeFrameLeftSide

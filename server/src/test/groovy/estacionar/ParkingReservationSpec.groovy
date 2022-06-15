@@ -20,38 +20,52 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
     def cleanup() {
     }
 
-    void "test aReservationIsCreatedWithCorrectValues: given that the location and timeframe are valid, when a driver wants to make a parking reservation, then it is created"() {
-        LocalTime start = LocalTime.of(0, 0)
-        LocalTime end = LocalTime.of(5, 0)
-        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
-        ParkingLocation parkingLocation = new ParkingLocation(
+    void "a reservation is created on valid location and time"() {
+        given: "parking is only available on street 'Siempre Viva' from 0:00AM to 05:00AM"
+        TimeFrame availableParkingTimeFrame = new TimeFrame(
+                startTime: LocalTime.of(0, 0),
+                endTime: LocalTime.of(5, 0))
+
+        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: availableParkingTimeFrame)
+        ParkingValidator parkingValidator = new ParkingValidator(streetValidations: [streetValidation])
+
+        when: "driver tries to make reservation on 'Siempre Viva' from 04:00AM to 04:30AM"
+        ParkingLocation reservationLocation = new ParkingLocation(
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
-        ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
-        ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, timeFrame, parkingValidator).get()
+        TimeFrame reservationParkingTimeFrame = new TimeFrame(
+                startTime: LocalTime.of(4, 0),
+                endTime: LocalTime.of(4, 30))
 
-        assert(reservation.isValidIn(parkingLocation) && reservation.isValidAt(LocalTime.of(4, 0)) && reservation.isFromDriver(driver));
+        ParkingReservation reservation = ParkingReservation.from(driver, reservationLocation, reservationParkingTimeFrame, parkingValidator)
+
+        then: "reservation from driver is made"
+        reservation.isFromDriver(driver)
     }
 
-    void "test aReservationCannotBeCreated: given that the location and timeframe are not valid, when a driver wants to make a parking reservation, then it is not created"() {
-        LocalTime start = LocalTime.of(0, 0)
-        LocalTime end = LocalTime.of(5, 0)
-        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
-        ParkingLocation parkingLocation = new ParkingLocation(
+    void "a reservation is not created on invalid location and time"() {
+        given: "parking is only available on street 'Siempre Viva' from 0:00AM to 05:00AM"
+        TimeFrame availableParkingTimeFrame = new TimeFrame(
+                startTime: LocalTime.of(0, 0),
+                endTime: LocalTime.of(5, 0))
+
+        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: availableParkingTimeFrame)
+        ParkingValidator parkingValidator = new ParkingValidator(streetValidations: [streetValidation])
+
+        when: "driver tries to make reservation on 'Siempre Viva' from 06:00AM to 07:00AM"
+        ParkingLocation reservationLocation = new ParkingLocation(
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        StreetValidator validator = new StreetValidator(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
-        ParkingValidator parkingValidator = new ParkingValidator(validators: [validator])
+        TimeFrame reservationParkingTimeFrame = new TimeFrame(
+                startTime: LocalTime.of(6, 0),
+                endTime: LocalTime.of(7, 0))
 
-        LocalTime startInvalid = LocalTime.of(6, 0)
-        LocalTime endInvalid = LocalTime.of(7, 0)
-        TimeFrame timeFrameInvalid = new TimeFrame(startTime: startInvalid, endTime: endInvalid)
+        ParkingReservation.from(driver, reservationLocation, reservationParkingTimeFrame, parkingValidator)
 
-        Optional<ParkingReservation> reservation = driver.reserveParkingAt(parkingLocation, timeFrameInvalid, parkingValidator)
-        assert(!reservation.isPresent());
+        then: "reservation from driver is not made and exception is thrown"
+        thrown(Exception)
     }
 
 }

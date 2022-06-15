@@ -12,12 +12,12 @@ class ParkingReservation {
     static constraints = {
     }
 
-    static Optional<ParkingReservation> from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
+    static ParkingReservation from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingValidator validator){
         if (validator.canMakeReservation(location, reserveTimeFrame)) {
             ParkingReservation newParkingReservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver)
-            return Optional.of(newParkingReservation);
+            return newParkingReservation;
         } else {
-            return Optional.empty();
+            throw new Exception("Cannot reserve parking with requested location and timeframe")
         }
     }
 

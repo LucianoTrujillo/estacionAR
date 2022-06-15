@@ -16,11 +16,61 @@ class TimeFrameSpec extends Specification implements DomainUnitTest<TimeFrame> {
     def cleanup() {
     }
 
-    void "test contains: given date time contained in time frame of reservation, when asked if contains date time, then returns true"() {
-        LocalTime start = LocalTime.of( 0, 0)
-        LocalTime end = LocalTime.of(2, 0)
-        timeFrame = new TimeFrame(startTime: start, endTime: end)
-        expect:"time frame contains dateTime"
-        timeFrame.contains(LocalTime.of(1, 0))
+    void "timeframe contains particular time"() {
+        given: "a reservation from 04:00AM to 05:00AM"
+        LocalTime start = LocalTime.of( 4, 0)
+        LocalTime end = LocalTime.of(5, 0)
+        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
+
+        when: "asked if reservation contains time 4:20AM"
+        boolean timeFrameContainsTime = timeFrame.contains(LocalTime.of(4, 20))
+
+        then: "returns true"
+        timeFrameContainsTime
+    }
+
+    void "timeframe does not contain particular time"() {
+        given: "a reservation from 03:00AM to 04:00AM"
+        LocalTime start = LocalTime.of( 3, 0)
+        LocalTime end = LocalTime.of(4, 0)
+        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
+
+        when: "asked if reservation contains time 4:20AM"
+        boolean timeFrameContainsTime = timeFrame.contains(LocalTime.of(4, 20))
+
+        then: "returns false"
+        !timeFrameContainsTime
+    }
+
+    void "timeframe contains particular time frame"() {
+        given: "a reservation from 04:00AM to 05:00AM"
+        LocalTime start = LocalTime.of( 4, 0)
+        LocalTime end = LocalTime.of(5, 0)
+        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
+
+        when: "asked if reservation contains time from 4:20AM to 04:50AM"
+        LocalTime testStart = LocalTime.of( 4, 0)
+        LocalTime testEnd = LocalTime.of(4, 50)
+        TimeFrame testTimeFrame = new TimeFrame(startTime: testStart, endTime: testEnd)
+        boolean timeFrameContainsTime = timeFrame.contains(testTimeFrame)
+
+        then: "returns true"
+        timeFrameContainsTime
+    }
+
+    void "timeframe does not contain particular time frame"() {
+        given: "a reservation from 04:00AM to 04:10AM"
+        LocalTime start = LocalTime.of( 4, 0)
+        LocalTime end = LocalTime.of(4, 10)
+        TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
+
+        when: "asked if reservation contains time from 4:20AM to 04:50AM"
+        LocalTime testStart = LocalTime.of( 4, 0)
+        LocalTime testEnd = LocalTime.of(5, 0)
+        TimeFrame testTimeFrame = new TimeFrame(startTime: testStart, endTime: testEnd)
+        boolean timeFrameContainsTime = timeFrame.contains(testTimeFrame)
+
+        then: "returns true"
+        !timeFrameContainsTime
     }
 }
