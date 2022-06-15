@@ -18,7 +18,7 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
     def cleanup() {
     }
 
-    void "test aReservationIsCreatedWithCorrectValues"() {
+    void "test aReservationIsCreatedWithCorrectValues: given that the location and timeframe are valid, when a driver wants to make a parking reservation, then it is created"() {
         LocalTime start = LocalTime.of(0, 0)
         LocalTime end = LocalTime.of(5, 0)
         TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
@@ -33,7 +33,7 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
         assert(reservation.isValidIn(parkingLocation) && reservation.isValidAt(timeFrame) && reservation.isFromDriver(driver));
     }
 
-    void "test aReservationCannotBeCreated"() {
+    void "test aReservationCannotBeCreated: given that the location and timeframe are not valid, when a driver wants to make a parking reservation, then it is not created"() {
         LocalTime start = LocalTime.of(0, 0)
         LocalTime end = LocalTime.of(5, 0)
         TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
