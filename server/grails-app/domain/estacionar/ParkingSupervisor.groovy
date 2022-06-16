@@ -14,8 +14,8 @@ class ParkingSupervisor {
     }
 
 
-    Optional<ParkingInfringement> validateParking(Driver driver, LocalTime time, ParkingLocation parkingLocation, List<ParkingReservation> parkingReservationsOfTheDay, ParkingReservationValidator parkingReservationValidator = new ParkingReservationValidator(streetValidations: [])) {
-        if (!parkingReservationValidator.reservationCanExistsAt(parkingLocation, time) || !driverHasReservation(driver, time, parkingLocation, parkingReservationsOfTheDay) ) {
+    Optional<ParkingInfringement> validateDriverHasReservation(Driver driver, LocalTime time, ParkingLocation parkingLocation, List<ParkingReservation> parkingReservationsOfTheDay) {
+        if (!driverHasReservation(driver, time, parkingLocation, parkingReservationsOfTheDay) ) {
             ParkingInfringement infringement = new ParkingInfringement(driver: driver, timeOfInfringement: LocalTime.now(), locationOfInfringement: parkingLocation, supervisorInCharge: this);
             return Optional.of(infringement);
         } else {

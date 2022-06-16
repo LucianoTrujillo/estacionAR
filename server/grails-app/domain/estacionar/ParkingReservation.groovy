@@ -11,7 +11,7 @@ class ParkingReservation {
     }
 
     static ParkingReservation from(Driver driver, ParkingLocation location, TimeFrame reserveTimeFrame, ParkingReservationValidator validator){
-        if (validator.reservationCanBeMadeFrom(location, reserveTimeFrame)) {
+        if (!validator.prohibitsReservationAt(location, reserveTimeFrame)) {
             ParkingReservation newParkingReservation = new ParkingReservation(reserveTimeFrame: reserveTimeFrame, parkingLocation: location, driver: driver)
             return newParkingReservation;
         } else {

@@ -23,7 +23,7 @@ class ParkingReservationValidatorSpec extends Specification implements DomainUni
         TimeFrame time = new TimeFrame(startTime: start, endTime: end)
 
         when: "parking validator is asked if a reservation can be made"
-        boolean reservationCanBeMade = parkingValidator.reservationCanBeMadeFrom(location, time)
+        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(location, time)
 
         then:"reservation can be made at location and time"
         reservationCanBeMade
@@ -43,7 +43,7 @@ class ParkingReservationValidatorSpec extends Specification implements DomainUni
                 endTime: LocalTime.of( 22, 0))
 
         when: "parking validator is asked if a reservation can be made"
-        boolean reservationCanBeMade = parkingValidator.reservationCanBeMadeFrom(location, time)
+        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(location, time)
 
         then:"reservation can not be made at location and time"
         !reservationCanBeMade
@@ -62,7 +62,7 @@ class ParkingReservationValidatorSpec extends Specification implements DomainUni
                 endTime: LocalTime.of(9, 0))
 
         when: "parking validator is asked if a reservation can be made"
-        boolean reservationCanBeMade = parkingValidator.reservationCanBeMadeFrom(location, time)
+        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(location, time)
 
         then:"reservation can be made at location and time"
         reservationCanBeMade

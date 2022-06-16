@@ -38,7 +38,7 @@ class ParkingSupervisorSpec extends Specification implements DomainUnitTest<Park
         ParkingReservation reservation = driver.reserveParkingAt(parkingLocation, parkingTimeFrame, parkingValidator)
 
         when: "when supervisor verifies reservation"
-        Optional<ParkingInfringement> infringement = supervisor.validateParking(driver, LocalTime.of(3, 0), parkingLocation, [reservation])
+        Optional<ParkingInfringement> infringement = supervisor.validateDriverHasReservation(driver, LocalTime.of(3, 0), parkingLocation, [reservation])
 
         then:"no infringement is created"
         !infringement.isPresent()
@@ -49,7 +49,7 @@ class ParkingSupervisorSpec extends Specification implements DomainUnitTest<Park
 
         when: "supervisor validates if driver has reservation"
         ParkingLocation location = new ParkingLocation(streetName: "Siempre Viva", streetNumber: 123)
-        ParkingInfringement infringement = supervisor.validateParking(driver, LocalTime.of(3, 0), location, []).get()
+        ParkingInfringement infringement = supervisor.validateDriverHasReservation(driver, LocalTime.of(3, 0), location, []).get()
 
         then:"infringement for driver is created"
         infringement.isFor(driver)
