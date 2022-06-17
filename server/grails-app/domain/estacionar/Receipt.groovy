@@ -1,6 +1,6 @@
 package estacionar
 
-class ParkingReceipt {
+class Receipt {
 
     static constraints = {
     }

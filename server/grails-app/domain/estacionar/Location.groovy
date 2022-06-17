@@ -1,6 +1,6 @@
 package estacionar
 
-class ParkingLocation {
+class Location {
 
     String streetName
     Integer streetNumber
@@ -30,6 +30,10 @@ class ParkingLocation {
 
     boolean isRightSide(){
         getSide() == LocationSide.RIGHT
+    }
+
+    boolean equals(Location location){
+        this.streetName == location.streetName && this.streetNumber == location.streetNumber
     }
 
 }

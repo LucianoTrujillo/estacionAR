@@ -3,7 +3,7 @@ package estacionar
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class ParkingInfringementSpec extends Specification implements DomainUnitTest<ParkingInfringement> {
+class LocationSpec extends Specification implements DomainUnitTest<Location> {
 
     def setup() {
     }

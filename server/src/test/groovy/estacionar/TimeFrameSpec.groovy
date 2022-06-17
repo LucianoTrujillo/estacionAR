@@ -17,12 +17,12 @@ class TimeFrameSpec extends Specification implements DomainUnitTest<TimeFrame> {
     }
 
     void "timeframe contains particular time"() {
-        given: "a reservation from 04:00AM to 05:00AM"
+        given: "a timeframe from 04:00AM to 05:00AM"
         LocalTime start = LocalTime.of( 4, 0)
         LocalTime end = LocalTime.of(5, 0)
         TimeFrame timeFrame = new TimeFrame(startTime: start, endTime: end)
 
-        when: "asked if reservation contains time 4:20AM"
+        when: "asked if timeframe contains time 4:20AM"
         boolean timeFrameContainsTime = timeFrame.contains(LocalTime.of(4, 20))
 
         then: "returns true"

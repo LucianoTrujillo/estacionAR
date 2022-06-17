@@ -1,4 +1,5 @@
 package estacionar
+import validations.ParkingReservationValidator
 
 class Driver {
 
@@ -7,6 +8,7 @@ class Driver {
     String address
     String email
     String licensePlate
+    List<Reservation> reservations
 
     static constraints = {
         name blank: false, nullable: false
@@ -16,7 +18,12 @@ class Driver {
         licensePlate blank: false, nullable: false
     }
 
-    def reserveParkingAt(ParkingLocation parkingLocation, TimeFrame timeFrame, ParkingReservationValidator parkingValidator) {
-        ParkingReservation.from(this, parkingLocation, timeFrame, parkingValidator)
+    def reserveParkingAt(ReservationDetails details, ParkingReservationValidator parkingValidator) {
+        Reservation reservation = Reservation.from(this, parkingValidator, details)
+        reservations.add(reservation)
+    }
+
+    boolean equals(Driver driver){
+        dni == driver.getDni()
     }
 }

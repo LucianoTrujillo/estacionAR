@@ -2,9 +2,12 @@ package estacionar
 
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
-import java.time.LocalTime
 
-class ParkingReservationSpec extends Specification implements DomainUnitTest<ParkingReservation> {
+import java.time.Duration
+import java.time.LocalTime
+import validations.*
+
+class ReservationSpec extends Specification implements DomainUnitTest<Reservation> {
 
     Driver driver;
     def setup() {
@@ -30,15 +33,16 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "driver tries to make reservation on 'Siempre Viva' from 04:00AM to 04:30AM"
-        ParkingLocation reservationLocation = new ParkingLocation(
+        Location reservationLocation = new Location(
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        TimeFrame reservationParkingTimeFrame = new TimeFrame(
-                startTime: LocalTime.of(4, 0),
-                endTime: LocalTime.of(4, 30))
+        ReservationDetails details = ReservationDetails.from(
+                LocalTime.of(4, 0),
+                Duration.ofMinutes(30),
+                reservationLocation)
 
-        ParkingReservation reservation = ParkingReservation.from(driver, reservationLocation, reservationParkingTimeFrame, parkingValidator)
+        Reservation reservation = Reservation.from(driver, parkingValidator, details)
 
         then: "reservation from driver is made"
         reservation.isFromDriver(driver)
@@ -54,16 +58,16 @@ class ParkingReservationSpec extends Specification implements DomainUnitTest<Par
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "driver tries to make reservation on 'Siempre Viva' from 06:00AM to 07:00AM"
-        ParkingLocation reservationLocation = new ParkingLocation(
+        Location reservationLocation = new Location(
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        TimeFrame reservationParkingTimeFrame = new TimeFrame(
-                startTime: LocalTime.of(6, 0),
-                endTime: LocalTime.of(7, 0))
+        ReservationDetails details = ReservationDetails.from(
+                LocalTime.of(6, 0),
+                Duration.ofMinutes(60),
+                reservationLocation)
 
-        ParkingReservation.from(driver, reservationLocation, reservationParkingTimeFrame, parkingValidator)
-
+        Reservation.from(driver, parkingValidator, details)
         then: "reservation from driver is not made and exception is thrown"
         thrown(Exception)
     }

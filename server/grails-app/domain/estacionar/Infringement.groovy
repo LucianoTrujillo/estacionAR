@@ -2,11 +2,11 @@ package estacionar
 
 import java.time.LocalTime
 
-class ParkingInfringement {
+class Infringement {
     Driver driver
-    LocalTime timeOfInfringement
-    ParkingLocation locationOfInfringement
-    ParkingSupervisor supervisorInCharge
+    LocalTime time
+    Location location
+    Supervisor supervisorInCharge
 
     static constraints = {
     }
