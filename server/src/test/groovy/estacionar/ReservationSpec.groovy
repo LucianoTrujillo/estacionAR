@@ -42,7 +42,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 Duration.ofMinutes(30),
                 reservationLocation)
 
-        Reservation reservation = Reservation.from(driver, parkingValidator, details)
+        Reservation reservation = Reservation.from(driver, details, parkingValidator)
 
         then: "reservation from driver is made"
         reservation.isFromDriver(driver)
@@ -67,7 +67,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 Duration.ofMinutes(60),
                 reservationLocation)
 
-        Reservation.from(driver, parkingValidator, details)
+        Reservation.from(driver, details, parkingValidator)
         then: "reservation from driver is not made and exception is thrown"
         thrown(Exception)
     }

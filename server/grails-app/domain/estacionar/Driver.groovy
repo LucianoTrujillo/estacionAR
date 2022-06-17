@@ -19,7 +19,7 @@ class Driver {
     }
 
     def reserveParkingAt(ReservationDetails details, ParkingReservationValidator parkingValidator) {
-        Reservation reservation = Reservation.from(this, parkingValidator, details)
+        Reservation reservation = Reservation.from(this, details, parkingValidator)
         reservations.add(reservation)
     }
 

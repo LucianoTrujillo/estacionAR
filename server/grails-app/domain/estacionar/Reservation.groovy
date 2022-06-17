@@ -41,7 +41,7 @@ class Reservation {
         state nullable: false
     }
 
-    static Reservation from(Driver driver, ParkingReservationValidator validator, ReservationDetails details = ReservationDetails.from(LocalTime.of(0, 0), Duration.ofMinutes(0), new Location(streetName: "", streetNumber: 0))){
+    static Reservation from(Driver driver, ReservationDetails details, ParkingReservationValidator validator){
         if(validator.prohibitsReservationAt(details))
             throw new Exception("Cannot reserve parking with requested location and timeframe")
 
