@@ -18,9 +18,14 @@ class Driver {
         licensePlate blank: false, nullable: false
     }
 
-    def reserveParkingAt(ReservationDetails details, ParkingReservationValidator parkingValidator) {
-        Reservation reservation = Reservation.from(this, details, parkingValidator)
-        reservations.add(reservation)
+    Reservation reserveParkingAt(ReservationDetails details, ParkingReservationValidator parkingValidator) {
+        Reservation reservation = Reservation.from(details, parkingValidator)
+        reservations.add(reservation);
+        reservation
+    }
+
+    def hasReservation(Reservation reservation) {
+        reservations.contains(reservation)
     }
 
     boolean equals(Object driver){

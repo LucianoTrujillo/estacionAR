@@ -1,7 +1,9 @@
 package estacionar
 
 import grails.testing.gorm.DomainUnitTest
+import location.Location
 import spock.lang.Specification
+import timeFrame.TimeFrame
 
 import java.time.Duration
 import java.time.LocalTime
@@ -16,7 +18,8 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 dni: "42822222",
                 address: "siempre viva 1234",
                 email: "pochito@gmail.com",
-                licensePlate: "BBB 111"
+                licensePlate: "BBB 111",
+                reservations: []
         )
     }
 
@@ -42,10 +45,10 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 Duration.ofMinutes(30),
                 reservationLocation)
 
-        Reservation reservation = Reservation.from(driver, details, parkingValidator)
+        Reservation reservation = driver.reserveParkingAt(details, parkingValidator);
 
         then: "reservation from driver is made"
-        reservation.isFromDriver(driver)
+        driver.hasReservation(reservation);
     }
 
     void "a reservation is not created because of invalid location and time"() {
@@ -67,7 +70,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 Duration.ofMinutes(60),
                 reservationLocation)
 
-        Reservation.from(driver, details, parkingValidator)
+        Reservation.from(details, parkingValidator)
         then: "reservation from driver is not made and exception is thrown"
         thrown(Exception)
     }

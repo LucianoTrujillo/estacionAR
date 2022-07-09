@@ -1,4 +1,7 @@
 package estacionar
+
+import location.Location
+
 import java.time.LocalTime
 
 class Inspector {
@@ -10,7 +13,7 @@ class Inspector {
     }
 
     private boolean driverHasReservation(Driver driver, LocalTime time, Location parkingLocation){
-        driver.reservations.any {it.isFromDriver(driver) && it.isValidAt(time) && it.isValidIn(parkingLocation)}
+        driver.reservations.any {it.isValidAt(time) && it.isValidIn(parkingLocation)}
     }
 
 

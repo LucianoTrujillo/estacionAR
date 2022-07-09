@@ -2,6 +2,7 @@ package estacionar
 
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
+import timeFrame.TimeFrame
 
 import java.time.LocalTime
 

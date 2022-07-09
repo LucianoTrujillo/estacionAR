@@ -1,5 +1,7 @@
 package estacionar
 
+import location.Location
+
 import java.time.LocalTime
 
 class Infringement {
@@ -10,6 +12,8 @@ class Infringement {
 
     static constraints = {
     }
+
+    static embedded = ['location']
 
     boolean isFor(Driver driver){
         driver == this.driver

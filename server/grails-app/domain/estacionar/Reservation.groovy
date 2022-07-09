@@ -1,5 +1,7 @@
 package estacionar
 
+import location.Location
+import timeFrame.TimeFrame
 import java.time.Duration
 import java.time.LocalTime
 import validations.ParkingReservationValidator
@@ -13,6 +15,8 @@ class ReservationDetails {
         timeFrame nullable: false
         location nullable: false
     }
+
+    static embedded = ['timeFrame', 'location']
 
     static ReservationDetails from(LocalTime startTime, Duration duration, Location location){
         new ReservationDetails(
@@ -28,7 +32,6 @@ class ReservationDetails {
 class Reservation {
 
     ReservationDetails details
-    Driver driver
     PaymentState state
 
 
@@ -39,20 +42,16 @@ class Reservation {
 
     static constraints = {
         details nullable: false
-        driver nullable: false, insert: false, update: false
         state nullable: false
     }
 
-    static Reservation from(Driver driver, ReservationDetails details, ParkingReservationValidator validator){
-        if(validator.prohibitsReservationAt(details))
-            // agregar detalles del conductor y la reserva
-            throw new Exception("Cannot reserve parking with requested location and timeframe")
+    static Reservation from(ReservationDetails details, ParkingReservationValidator validator){
+        if(validator.prohibitsReservationAt(details)){
+            String errMsg = String.format("Cannot reserve parking with requested location {} and timeframe {}", details.location, details.timeFrame);
+            throw new Exception(errMsg)
+        }
 
-        new Reservation(details: details, driver: driver, state: PaymentState.UNPAID)
-    }
-
-    boolean isFromDriver(Driver driver){
-        this.driver == driver
+        new Reservation(details: details, state: PaymentState.UNPAID)
     }
 
     boolean isValidAt(LocalTime time){

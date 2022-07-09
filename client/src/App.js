@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import AppNav from './AppNav';
 import {Row} from 'reactstrap'
-
+import {API} from './API';
 import grailsLogo from './images/grails-cupsonly-logo-white.svg';
 import reactLogo from './images/logo.svg';
 import {CLIENT_VERSION, REACT_VERSION, SERVER_URL} from './config';
 import 'whatwg-fetch';
 import Footer from "./Footer";
+
+const api = new API();
 
 class App extends Component {
 
@@ -24,10 +26,12 @@ class App extends Component {
     }
 
     componentDidMount() {
-        fetch(SERVER_URL + '/application')
-            .then(r => r.json())
+        api.get("application")
             .then(json => this.setState({serverInfo: json}))
             .catch(error => console.error('Error connecting to server: ' + error));
+
+        api.get("test")
+            .then(json => console.log(json))
 
     }
 

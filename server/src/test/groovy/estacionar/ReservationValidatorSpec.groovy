@@ -1,6 +1,8 @@
 package estacionar
 
+import location.Location
 import spock.lang.Specification
+import timeFrame.TimeFrame
 import validations.*
 
 import java.time.Duration

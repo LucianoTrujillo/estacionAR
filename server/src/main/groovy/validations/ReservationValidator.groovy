@@ -1,23 +1,29 @@
 package validations
 import estacionar.*
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.Immutable
+import groovy.transform.ToString
+import timeFrame.TimeFrame
 
+@ToString
+@EqualsAndHashCode
 class ParkingReservationValidator {
 
     List<StreetValidation> streetValidations
-
-    static constraints = {
-    }
 
     boolean prohibitsReservationAt(ReservationDetails details){
         streetValidations.any { it.prohibitsReservationAt(details) }
     }
 }
 
-
+@Immutable
+@ToString
+@EqualsAndHashCode
 class StreetValidation {
     List<String> streetsToValidate
     TimeFrame availableTimeFrameRightSide
     TimeFrame availableTimeFrameLeftSide
+
 
     boolean canParkOnLeftSideInTimeFrame(ReservationDetails details){
         details.getLocation().isLeftSide() && availableTimeFrameLeftSide.contains(details.getTimeFrame())

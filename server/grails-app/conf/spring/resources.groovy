@@ -1,6 +1,7 @@
 
 // Place your Spring DSL code here
-import estacionar.*
+
+import timeFrame.TimeFrame
 import validations.StreetValidation
 import validations.ParkingReservationValidator
 
