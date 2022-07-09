@@ -1,7 +1,8 @@
-import ParkingReservationValidator
 
 // Place your Spring DSL code here
 import estacionar.*
+import validations.StreetValidation
+import validations.ParkingReservationValidator
 
 import java.time.LocalTime
 

@@ -7,13 +7,13 @@ import validations.*
 import java.time.Duration
 import java.time.LocalTime
 
-class SupervisorSpec extends Specification implements DomainUnitTest<Supervisor> {
+class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
 
-    Supervisor supervisor
+    Inspector supervisor
     Driver driver
 
     def setup() {
-        supervisor = new Supervisor(license: "AAA 000")
+        supervisor = new Inspector(license: "AAA 000")
         driver = new Driver(
                 name: "Pocho",
                 dni: "42822222",

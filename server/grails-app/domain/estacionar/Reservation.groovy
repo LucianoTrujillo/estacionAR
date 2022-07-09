@@ -4,10 +4,6 @@ import java.time.Duration
 import java.time.LocalTime
 import validations.ParkingReservationValidator
 
-enum ReservationState {
-    Unpaid,
-    Paid
-}
 
 class ReservationDetails {
     TimeFrame timeFrame
@@ -33,19 +29,26 @@ class Reservation {
 
     ReservationDetails details
     Driver driver
-    ReservationState state
+    PaymentState state
+
+
+    enum PaymentState {
+        UNPAID,
+        PAID
+    }
 
     static constraints = {
         details nullable: false
-        driver nullable: false
+        driver nullable: false, insert: false, update: false
         state nullable: false
     }
 
     static Reservation from(Driver driver, ReservationDetails details, ParkingReservationValidator validator){
         if(validator.prohibitsReservationAt(details))
+            // agregar detalles del conductor y la reserva
             throw new Exception("Cannot reserve parking with requested location and timeframe")
 
-        new Reservation(details: details, driver: driver, state: ReservationState.Unpaid)
+        new Reservation(details: details, driver: driver, state: PaymentState.UNPAID)
     }
 
     boolean isFromDriver(Driver driver){

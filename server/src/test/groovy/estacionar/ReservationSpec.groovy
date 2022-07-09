@@ -48,7 +48,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
         reservation.isFromDriver(driver)
     }
 
-    void "a reservation is not created on invalid location and time"() {
+    void "a reservation is not created because of invalid location and time"() {
         given: "parking is only available on street 'Siempre Viva' from 0:00AM to 05:00AM"
         TimeFrame availableParkingTimeFrame = new TimeFrame(
                 startTime: LocalTime.of(0, 0),

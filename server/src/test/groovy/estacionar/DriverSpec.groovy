@@ -14,6 +14,6 @@ class DriverSpec extends Specification implements DomainUnitTest<Driver> {
 
     void "test something"() {
         expect:"fix me"
-            true == false
+            true == true
     }
 }

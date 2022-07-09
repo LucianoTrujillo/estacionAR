@@ -10,30 +10,40 @@ class Location {
         streetNumber nullable: false
     }
 
-    enum LocationSide {
+    enum Side {
         LEFT,
         RIGHT
     }
 
-    LocationSide getSide() {
+    Side getSide() {
         if (streetNumber % 2 == 0) {
-            LocationSide.LEFT
+            Side.LEFT
         } else {
-            LocationSide.RIGHT
-
+            Side.RIGHT
         }
     }
 
     boolean isLeftSide(){
-        getSide() == LocationSide.LEFT
+        getSide() == Side.LEFT
     }
 
     boolean isRightSide(){
-        getSide() == LocationSide.RIGHT
+        getSide() == Side.RIGHT
     }
 
-    boolean equals(Location location){
-        this.streetName == location.streetName && this.streetNumber == location.streetNumber
+    boolean equals(Object location){
+        if (this === location)
+            return true
+
+        if (location == null)
+            return false
+
+        if (this.class != location.class) {
+            return false
+        }
+
+        Location testLocation = (Location)location;
+        streetName == testLocation.streetName && streetNumber == testLocation.streetNumber
     }
 
 }

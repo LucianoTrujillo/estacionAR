@@ -6,7 +6,7 @@ class Infringement {
     Driver driver
     LocalTime time
     Location location
-    Supervisor supervisorInCharge
+    Inspector supervisorInCharge
 
     static constraints = {
     }

@@ -23,7 +23,18 @@ class Driver {
         reservations.add(reservation)
     }
 
-    boolean equals(Driver driver){
-        dni == driver.getDni()
+    boolean equals(Object driver){
+        if (this === driver)
+            return true
+
+        if (driver == null)
+            return false
+
+        if (this.class != driver.class) {
+            return false
+        }
+
+        Driver testDriver = (Driver)driver;
+        dni == testDriver.dni
     }
 }
