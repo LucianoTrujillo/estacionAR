@@ -4,7 +4,7 @@ Una aplicación web en grails que revoluciona el funcionamiento de los parquíme
 ## correr Frontend (puerto 3000)
 
 ```
-cd client
+cd frontend
 yarn add
 yarn start
 ```
