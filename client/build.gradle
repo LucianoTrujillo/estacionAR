@@ -3,7 +3,7 @@ plugins {
 }
 
 node {
-    version = '10.15.0' // https://nodejs.org/en/
+    version = '12.19.0' // https://nodejs.org/en/
     yarnVersion = '1.13.0' // https://yarnpkg.com/en/
     download = true
 }

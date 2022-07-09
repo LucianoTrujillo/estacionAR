@@ -7,6 +7,7 @@ import reactLogo from './images/logo.svg';
 import {CLIENT_VERSION, REACT_VERSION, SERVER_URL} from './config';
 import 'whatwg-fetch';
 import Footer from "./Footer";
+import Button from '@mui/material/Button';
 
 const api = new API();
 
@@ -32,6 +33,12 @@ class App extends Component {
 
         api.get("test")
             .then(json => console.log(json))
+            .catch(error => console.error('Test failed: ' + error));
+
+        api.get("queee")
+            .then(json => console.log(json))
+            .catch(error => console.error('chauuu failed: ' + error));
+
 
     }
 
@@ -58,7 +65,7 @@ class App extends Component {
                             Below is a list of controllers that are currently deployed in
                             this application, click on each to execute its default action:
                         </p>
-
+                        <Button variant="contained">Hello World</Button>
                         <div id="controllers" role="navigation">
                             <h2>Available Controllers:</h2>
                             <ul>
