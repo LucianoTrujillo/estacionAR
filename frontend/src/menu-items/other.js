@@ -1,8 +1,8 @@
 // assets
-import { IconBrandChrome, IconHelp } from '@tabler/icons';
+import { IconHelp, IconCalendar } from '@tabler/icons';
 
 // constant
-const icons = { IconBrandChrome, IconHelp };
+const icons = { IconHelp, IconCalendar };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
 
@@ -12,20 +12,11 @@ const other = {
     children: [
         {
             id: 'sample-page',
-            title: 'Sample Page',
+            title: 'Nueva Reserva',
             type: 'item',
             url: '/sample-page',
-            icon: icons.IconBrandChrome,
+            icon: icons.IconCalendar,
             breadcrumbs: false
-        },
-        {
-            id: 'documentation',
-            title: 'Documentation',
-            type: 'item',
-            url: 'https://codedthemes.gitbook.io/berry/',
-            icon: icons.IconHelp,
-            external: true,
-            target: true
         }
     ]
 };
