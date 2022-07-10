@@ -2,12 +2,14 @@ import { useSelector } from 'react-redux';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, StyledEngineProvider } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
 // routing
 import Routes from 'routes';
 
 // defaultTheme
 import themes from 'themes';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 // project imports
 import NavigationScroll from 'layout/NavigationScroll';
@@ -18,14 +20,16 @@ const App = () => {
     const customization = useSelector((state) => state.customization);
 
     return (
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={themes(customization)}>
-                <CssBaseline />
-                <NavigationScroll>
-                    <Routes />
-                </NavigationScroll>
-            </ThemeProvider>
-        </StyledEngineProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={themes(customization)}>
+                    <CssBaseline />
+                    <NavigationScroll>
+                        <Routes />
+                    </NavigationScroll>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </LocalizationProvider>
     );
 };
 
