@@ -82,7 +82,7 @@ const MainRoutes = {
             ]
         },
         {
-            path: 'sample-page',
+            path: 'new-reservation',
             element: <SamplePage />
         }
     ]

@@ -1,20 +1,18 @@
 package estacionar
+import grails.rest.*
 import validations.ParkingReservationValidator
 
+@Resource(uri='/drivers')
 class Driver {
 
     String name
     String dni
-    String address
-    String email
     String licensePlate
     List<Reservation> reservations
 
     static constraints = {
         name blank: false, nullable: false
-        dni blank: false, nullable: false
-        address blank: false, nullable: false
-        email blank: false, nullable: false
+        dni blank: false, nullable: false, unique: true
         licensePlate blank: false, nullable: false
     }
 

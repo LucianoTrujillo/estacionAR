@@ -1,14 +1,14 @@
 package estacionar
 
 import location.Location
-import timeFrame.TimeFrame
+import timeFrame.LocalDateTimeFrame
 import java.time.Duration
-import java.time.LocalTime
+import java.time.LocalDateTime
 import validations.ParkingReservationValidator
 
 
 class ReservationDetails {
-    TimeFrame timeFrame
+    LocalDateTimeFrame timeFrame
     Location location
 
     static constraints = {
@@ -18,9 +18,9 @@ class ReservationDetails {
 
     static embedded = ['timeFrame', 'location']
 
-    static ReservationDetails from(LocalTime startTime, Duration duration, Location location){
+    static ReservationDetails from(LocalDateTime startTime, Duration duration, Location location){
         new ReservationDetails(
-                timeFrame: new TimeFrame(
+                timeFrame: new LocalDateTimeFrame(
                         startTime: startTime,
                         endTime: startTime + duration
                 ),
@@ -47,14 +47,14 @@ class Reservation {
 
     static Reservation from(ReservationDetails details, ParkingReservationValidator validator){
         if(validator.prohibitsReservationAt(details)){
-            String errMsg = String.format("Cannot reserve parking with requested location {} and timeframe {}", details.location, details.timeFrame);
+            String errMsg = String.format("Cannot reserve parking with requested location {} and timeframe {}", details.location, details.timeFrame)
             throw new Exception(errMsg)
         }
 
         new Reservation(details: details, state: PaymentState.UNPAID)
     }
 
-    boolean isValidAt(LocalTime time){
+    boolean isValidAt(LocalDateTime time){
         this.details.timeFrame.contains(time)
     }
 

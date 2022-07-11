@@ -3,10 +3,12 @@ package estacionar
 import grails.testing.gorm.DomainUnitTest
 import location.Location
 import spock.lang.Specification
-import timeFrame.TimeFrame
+import timeFrame.LocalDateTimeFrame
+import timeFrame.LocalTimeFrame
 import validations.*
 
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
@@ -30,7 +32,7 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
     }
 
     void "supervisor does not create infringement if driver has valid reservation"() {
-        TimeFrame parkingTimeFrame = new TimeFrame(
+        LocalTimeFrame parkingTimeFrame = new LocalTimeFrame(
                 startTime: LocalTime.of(0, 0),
                 endTime: LocalTime.of(5, 0))
         Location parkingLocation = new Location(
@@ -42,13 +44,15 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
 
         given: "driver has reserved parking"
         ReservationDetails details = ReservationDetails.from(
-                LocalTime.of(0, 0),
+                LocalDateTime.of(2000, 1, 1, 0, 0),
                 Duration.ofMinutes(30),
                 new Location(streetName: "Siempre Viva", streetNumber: 123))
         driver.reserveParkingAt(details, parkingValidator)
 
         when: "when supervisor verifies reservation"
-        Optional<Infringement> infringement = supervisor.createInfringementIfNoReservationFrom(driver, LocalTime.of(0, 10), parkingLocation)
+        Optional<Infringement> infringement = supervisor.createInfringementIfNoReservationFrom(driver,
+                LocalDateTime.of(2000, 1, 1, 0, 0)
+                , parkingLocation)
 
         then:"no infringement is created"
         !infringement.isPresent()
@@ -59,7 +63,9 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
 
         when: "supervisor validates if driver has reservation"
         Location location = new Location(streetName: "Siempre Viva", streetNumber: 123)
-        Infringement infringement = supervisor.createInfringementIfNoReservationFrom(driver, LocalTime.of(3, 0), location).get()
+        Infringement infringement = supervisor.createInfringementIfNoReservationFrom(driver,
+                LocalDateTime.of(2000, 1, 1, 3, 0),
+                location).get()
 
         then:"infringement for driver is created"
         infringement.isFor(driver)

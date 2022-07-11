@@ -12,6 +12,18 @@ export class API {
         }).then((response) => response.json());
     }
 
+    post(path, body) {
+        const url = 'http://localhost:8080/' + path;
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then((response) => response.json());
+    }
+
     queryString(queryParams) {
         if (!queryParams) {
             return '';

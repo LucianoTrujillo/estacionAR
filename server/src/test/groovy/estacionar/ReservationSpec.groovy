@@ -3,9 +3,10 @@ package estacionar
 import grails.testing.gorm.DomainUnitTest
 import location.Location
 import spock.lang.Specification
-import timeFrame.TimeFrame
-
+import timeFrame.LocalDateTimeFrame
+import timeFrame.LocalTimeFrame
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 import validations.*
 
@@ -28,7 +29,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
 
     void "a reservation is created on valid location and time"() {
         given: "parking is only available on street 'Siempre Viva' from 0:00AM to 05:00AM"
-        TimeFrame availableParkingTimeFrame = new TimeFrame(
+        LocalTimeFrame availableParkingTimeFrame = new LocalTimeFrame(
                 startTime: LocalTime.of(0, 0),
                 endTime: LocalTime.of(5, 0))
 
@@ -41,7 +42,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetNumber: 123
         )
         ReservationDetails details = ReservationDetails.from(
-                LocalTime.of(4, 0),
+                LocalDateTime.of(2000, 1, 1, 4, 0),
                 Duration.ofMinutes(30),
                 reservationLocation)
 
@@ -53,7 +54,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
 
     void "a reservation is not created because of invalid location and time"() {
         given: "parking is only available on street 'Siempre Viva' from 0:00AM to 05:00AM"
-        TimeFrame availableParkingTimeFrame = new TimeFrame(
+        LocalTimeFrame availableParkingTimeFrame = new LocalTimeFrame(
                 startTime: LocalTime.of(0, 0),
                 endTime: LocalTime.of(5, 0))
 
@@ -66,7 +67,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetNumber: 123
         )
         ReservationDetails details = ReservationDetails.from(
-                LocalTime.of(6, 0),
+                LocalDateTime.of(2000, 1, 1, 6, 0),
                 Duration.ofMinutes(60),
                 reservationLocation)
 

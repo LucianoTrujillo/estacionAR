@@ -7,9 +7,11 @@ import { Typography, Divider, List, ListItem, Box } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import Button from '@mui/material/Button';
-
+import { API } from '../../API';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
+
+const api = new API();
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -19,10 +21,22 @@ const SamplePage = () => {
         setValue(newValue);
     };
 
+    const handleReserve = async () => {
+        api.post('reserve', {
+            driverId: 1
+        })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     return (
         <MainCard title="Nueva Reserva">
             <Box style={{ display: 'flex', flexDirection: 'column' }}>
-                <List row style={{ display: 'flex' }}>
+                <List row={'true'} style={{ display: 'flex' }}>
                     <ListItem style={{ width: 300 }}>
                         <List>
                             <Typography variant="body1" marginBottom={2}>
@@ -70,7 +84,12 @@ const SamplePage = () => {
                     </ListItem>
                 </List>
                 {/* Button with text 'Resevar' at the right-most position*/}
-                <Button variant="contained" fullWidth={false} style={{ width: 250, alignSelf: 'end', boxShadow: '0px 0px 0px black' }}>
+                <Button
+                    onClick={handleReserve}
+                    variant="contained"
+                    fullWidth={false}
+                    style={{ width: 250, alignSelf: 'end', boxShadow: '0px 0px 0px black' }}
+                >
                     Reservar
                 </Button>
             </Box>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import * as React from 'react';
 // material-ui
 import { Grid } from '@mui/material';
 import { API } from '../../../API';
@@ -11,14 +11,20 @@ import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
-
+import UserContext from 'contexts/UserContext';
+import { useNavigate } from 'react-router-dom';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const api = new API();
 
 const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
+    const { currentUser } = React.useContext(UserContext);
+    const navigate = useNavigate();
     useEffect(() => {
+        if (!currentUser.id) {
+            navigate('/pages/login');
+        }
         setLoading(false);
         api.get('test')
             .then((json) => {

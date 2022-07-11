@@ -2,11 +2,11 @@ package estacionar
 
 import location.Location
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 class Infringement {
     Driver driver
-    LocalTime time
+    LocalDateTime time
     Location location
     Inspector supervisorInCharge
 

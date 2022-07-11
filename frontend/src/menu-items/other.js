@@ -11,10 +11,10 @@ const other = {
     type: 'group',
     children: [
         {
-            id: 'sample-page',
+            id: 'new-reservation',
             title: 'Nueva Reserva',
             type: 'item',
-            url: '/sample-page',
+            url: '/new-reservation',
             icon: icons.IconCalendar,
             breadcrumbs: false
         }
