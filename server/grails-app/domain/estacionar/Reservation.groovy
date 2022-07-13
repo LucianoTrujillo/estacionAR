@@ -1,39 +1,18 @@
 package estacionar
 
 import location.Location
+import reservationDetails.ReservationDetails
 import timeFrame.LocalDateTimeFrame
-import java.time.Duration
+
 import java.time.LocalDateTime
 import validations.ParkingReservationValidator
-
-
-class ReservationDetails {
-    LocalDateTimeFrame timeFrame
-    Location location
-
-    static constraints = {
-        timeFrame nullable: false
-        location nullable: false
-    }
-
-    static embedded = ['timeFrame', 'location']
-
-    static ReservationDetails from(LocalDateTime startTime, Duration duration, Location location){
-        new ReservationDetails(
-                timeFrame: new LocalDateTimeFrame(
-                        startTime: startTime,
-                        endTime: startTime + duration
-                ),
-                location: location
-        )
-    }
-}
 
 class Reservation {
 
     ReservationDetails details
     PaymentState state
 
+    static embedded = ['details', 'state']
 
     enum PaymentState {
         UNPAID,
@@ -60,5 +39,9 @@ class Reservation {
 
     boolean isValidIn(Location location){
         this.details.location == location
+    }
+
+    String toString(){
+        return String.format("Reservation(details: %s, state: %s)", this.details, this.state)
     }
 }

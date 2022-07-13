@@ -1,5 +1,6 @@
 package estacionar
 import grails.rest.*
+import reservationDetails.ReservationDetails
 import validations.ParkingReservationValidator
 
 @Resource(uri='/drivers')
@@ -18,7 +19,7 @@ class Driver {
 
     Reservation reserveParkingAt(ReservationDetails details, ParkingReservationValidator parkingValidator) {
         Reservation reservation = Reservation.from(details, parkingValidator)
-        reservations.add(reservation);
+        reservations.add(reservation)
         reservation
     }
 

@@ -2,8 +2,8 @@ package estacionar
 
 import grails.testing.gorm.DomainUnitTest
 import location.Location
+import reservationDetails.ReservationDetails
 import spock.lang.Specification
-import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 import java.time.Duration
 import java.time.LocalDateTime

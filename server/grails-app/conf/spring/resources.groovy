@@ -6,6 +6,7 @@ import validations.ParkingReservationValidator
 import java.time.LocalTime
 import timeFrame.LocalTimeFrame
 
+
 beans = {
     parkingReservationValidator(ParkingReservationValidator) {
         streetValidations = [new StreetValidation(

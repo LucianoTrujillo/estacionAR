@@ -39,6 +39,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation "org.grails:grails-core"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-tomcat"
@@ -53,8 +54,8 @@ dependencies {
     implementation "org.grails:grails-logging"
     implementation "org.grails.plugins:cache"
     implementation "org.grails.plugins:async"
-    implementation "org.grails.plugins:hibernate5"
-    implementation "org.hibernate:hibernate-core:5.6.5.Final"
+    compile "org.grails.plugins:hibernate5"
+    compile "org.hibernate:hibernate-core:5.4.0.Final"
     implementation "org.grails.plugins:views-json"
     implementation "org.grails.plugins:views-json-templates"
     profile "org.grails.profiles:react"

@@ -22,8 +22,14 @@ const SamplePage = () => {
     };
 
     const handleReserve = async () => {
-        api.post('reserve', {
-            driverId: 1
+        console.log('a ver la date', new Date().toString());
+        api.post('drivers/1/reservations', {
+            startTime: '2007-12-03T10:15:30',
+            endTime: '2007-12-03T10:15:30',
+            location: {
+                streetName: '',
+                streetNumber: 122
+            }
         })
             .then((res) => {
                 console.log(res);
