@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+        'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+
+<hibernate-mapping>
+    <class name = "Reservation" table = "RESERVATION">
+
+        <meta attribute = "class-description">
+            This class contains the reservation information.
+        </meta>
+
+        <id name = "id" type = "int" column = "id">
+            <generator class="native"/>
+        </id>
+
+        <component name = "details" class="reservationDetails.ReservationDetails">
+            <<nested-composite-element name = "location" class="location.Location">
+                <property name = "streetName" column = "street_name" />
+                <property name = "streetNumber" column = "street_number" />
+            </nested-composite-element>
+        </component>
+
+    </class>
+</hibernate-mapping>

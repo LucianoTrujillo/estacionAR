@@ -8,7 +8,6 @@ import groovy.transform.ToString
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-@Immutable
 @ToString
 @EqualsAndHashCode
 class LocalDateTimeFrame {

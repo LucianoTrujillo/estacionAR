@@ -10,7 +10,7 @@ import timeFrame.LocalDateTimeFrame
 import java.time.Duration
 import java.time.LocalDateTime
 
-@Immutable
+
 @ToString
 @EqualsAndHashCode
 class ReservationDetails {
