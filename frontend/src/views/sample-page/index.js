@@ -4,31 +4,29 @@ import TextField from '@mui/material/TextField';
 
 // material-ui
 import { Typography, Divider, List, ListItem, Box } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import Button from '@mui/material/Button';
 import { API } from '../../API';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 const api = new API();
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const SamplePage = () => {
-    const [value, setValue] = React.useState(new Date());
-    const handleChange = (newValue) => {
-        setValue(newValue);
-    };
+    const [startDateTime, setStartDateTime] = React.useState(new Date());
+    const [endDateTime, setEndDateTime] = React.useState(new Date());
+    const [street, setStreet] = React.useState('');
+    const [streetNumber, setStreetNumber] = React.useState('');
 
     const handleReserve = async () => {
-        console.log('a ver la date', new Date().toString());
         api.post('drivers/1/reservations', {
-            startTime: '2007-12-03T10:15:30',
-            endTime: '2007-12-03T10:15:30',
+            startTime: startDateTime.toISOString(),
+            endTime: endDateTime.toISOString(),
             location: {
-                streetName: '',
-                streetNumber: 122
+                streetName: street,
+                streetNumber: Number.parseInt(streetNumber, 10)
             }
         })
             .then((res) => {
@@ -46,32 +44,21 @@ const SamplePage = () => {
                     <ListItem style={{ width: 300 }}>
                         <List>
                             <Typography variant="body1" marginBottom={2}>
-                                Elegí el día
+                                Elegí cuando comienza la reserva
                             </Typography>
-                            <DatePicker
-                                renderInput={(props) => <TextField {...props} />}
-                                label="DateTimePicker"
-                                value={value}
-                                onChange={(newValue) => {
-                                    setValue(newValue);
-                                }}
-                            />
-                            <Typography variant="body1" marginBottom={2} marginTop={3}>
-                                Elegí la hora de comienzo
-                            </Typography>
-                            <TimePicker
-                                label="Inicio"
-                                value={value}
-                                onChange={handleChange}
+                            <DateTimePicker
+                                label="Date&Time picker"
+                                value={startDateTime}
+                                onChange={(val) => setStartDateTime(val)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
-                            <Typography variant="body1" marginBottom={2} marginTop={3}>
-                                Elegí la hora de fin
+                            <Typography variant="body1" marginTop={3} marginBottom={2}>
+                                Elegí cuando termina la reserva
                             </Typography>
-                            <TimePicker
-                                label="Fin"
-                                value={value}
-                                onChange={handleChange}
+                            <DateTimePicker
+                                label="Date&Time picker"
+                                value={endDateTime}
+                                onChange={(val) => setEndDateTime(val)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </List>
@@ -81,11 +68,24 @@ const SamplePage = () => {
                             <Typography variant="body1" marginBottom={2}>
                                 Elegí la calle
                             </Typography>
-                            <TextField id="outlined-basic" label="Calle" variant="outlined" />
+                            <TextField
+                                id="outlined-basic"
+                                label="Calle"
+                                variant="outlined"
+                                value={street}
+                                onChange={(e) => setStreet(e.target.value)}
+                            />
                             <Typography variant="body1" marginBottom={2} marginTop={3}>
                                 Elegí la altura
                             </Typography>
-                            <TextField id="outlined-basic" label="Calle" variant="outlined" />
+                            <TextField
+                                id="outlined-basic"
+                                label="Altura"
+                                variant="outlined"
+                                value={streetNumber}
+                                // leaves only the numbers in the input
+                                onChange={(e) => setStreetNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                            />
                         </List>
                     </ListItem>
                 </List>

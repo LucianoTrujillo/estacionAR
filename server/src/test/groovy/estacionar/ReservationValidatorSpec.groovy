@@ -1,8 +1,9 @@
 package estacionar
 
 import location.Location
-import reservationDetails.ReservationDetails
+
 import spock.lang.Specification
+import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 import validations.*
 
@@ -24,12 +25,11 @@ class ReservationValidatorSpec extends Specification {
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "parking validator is asked if a reservation can be made"
-        ReservationDetails details = ReservationDetails.from(
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 4, 0),
-                Duration.ofMinutes(0),
-                new Location(streetName: "Siempre Viva", streetNumber: 123))
-        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(details)
-
+                Duration.ofMinutes(0))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        def reservationCanBeMade = Reservation.from(timeFrame, reservationLocation, parkingValidator)
         then:"reservation can be made at location and time"
         reservationCanBeMade
     }
@@ -43,11 +43,11 @@ class ReservationValidatorSpec extends Specification {
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "parking validator is asked if a reservation can be made"
-        ReservationDetails details = ReservationDetails.from(
+        LocalDateTimeFrame timeFrameTested = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 4, 0),
-                Duration.ofMinutes(120),
-                new Location(streetName: "Siempre Viva", streetNumber: 123))
-        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(details)
+                Duration.ofMinutes(120))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(timeFrameTested, reservationLocation)
 
         then:"reservation can not be made at location and time"
         !reservationCanBeMade
@@ -62,11 +62,10 @@ class ReservationValidatorSpec extends Specification {
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         when: "parking validator is asked if a reservation can be made"
-        ReservationDetails details = ReservationDetails.from(
+        LocalDateTimeFrame timeFrameTested = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 20, 0),
-                Duration.ofMinutes(30),
-                new Location(streetName: "Siempre Viva", streetNumber: 123))
-        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(details)
+                Duration.ofMinutes(30))
+        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt( timeFrameTested,  new Location(streetName: "Siempre Viva", streetNumber: 123))
 
         then:"reservation can be made at location and time"
         reservationCanBeMade

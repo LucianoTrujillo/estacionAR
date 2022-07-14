@@ -2,8 +2,9 @@ package estacionar
 
 import grails.testing.gorm.DomainUnitTest
 import location.Location
-import reservationDetails.ReservationDetails
+
 import spock.lang.Specification
+import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 import validations.*
 
@@ -43,11 +44,11 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
 
         given: "driver has reserved parking"
-        ReservationDetails details = ReservationDetails.from(
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 0, 0),
-                Duration.ofMinutes(30),
-                new Location(streetName: "Siempre Viva", streetNumber: 123))
-        driver.reserveParkingAt(details, parkingValidator)
+                Duration.ofMinutes(30))
+
+        driver.reserveParkingAt(timeFrame, new Location(streetName: "Siempre Viva", streetNumber: 123), parkingValidator)
 
         when: "when supervisor verifies reservation"
         Optional<Infringement> infringement = supervisor.createInfringementIfNoReservationFrom(driver,

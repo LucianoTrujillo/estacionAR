@@ -2,8 +2,9 @@ package estacionar
 
 import grails.testing.gorm.DomainUnitTest
 import location.Location
-import reservationDetails.ReservationDetails
+
 import spock.lang.Specification
+import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 import java.time.Duration
 import java.time.LocalDateTime
@@ -41,12 +42,11 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        ReservationDetails details = ReservationDetails.from(
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 4, 0),
-                Duration.ofMinutes(30),
-                reservationLocation)
+                Duration.ofMinutes(30))
 
-        Reservation reservation = driver.reserveParkingAt(details, parkingValidator);
+        def reservation = driver.reserveParkingAt(timeFrame, reservationLocation, parkingValidator)
 
         then: "reservation from driver is made"
         driver.hasReservation(reservation);
@@ -66,12 +66,11 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        ReservationDetails details = ReservationDetails.from(
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 6, 0),
-                Duration.ofMinutes(60),
-                reservationLocation)
+                Duration.ofMinutes(60))
 
-        Reservation.from(details, parkingValidator)
+        Reservation.from(timeFrame, reservationLocation, parkingValidator)
         then: "reservation from driver is not made and exception is thrown"
         thrown(Exception)
     }

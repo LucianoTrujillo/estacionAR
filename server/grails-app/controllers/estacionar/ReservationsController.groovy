@@ -1,10 +1,6 @@
 package estacionar
 
 import location.Location
-import reservationDetails.ReservationDetails
-import timeFrame.LocalDateTimeFrame
-import validations.ParkingReservationValidator
-import java.time.LocalDateTime
 
 class ReservationsController {
 	static responseFormats = ['json', 'xml']
@@ -24,13 +20,11 @@ class ReservationsController {
         String endTime = body["endTime"] as String
         Location location = new Location(body["location"] as Map)
         def reservation =  reservationsService.createReservation(driverId, startTime, endTime, location)
-        reservation.save()
         render reservation.toString()
     }
 
     def getReservationsOfDriver(int driverId) {
-        def reservations = Reservation.findAll();
-        render reservations.toString()
+        render Driver.findById(driverId).reservations.toString()
     }
 
 

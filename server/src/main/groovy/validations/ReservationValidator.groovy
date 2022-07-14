@@ -4,7 +4,7 @@ package validations
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.Immutable
 import groovy.transform.ToString
-import reservationDetails.ReservationDetails
+import location.Location
 import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 
@@ -15,8 +15,8 @@ class ParkingReservationValidator {
     List<StreetValidation> streetValidations
 
 
-    boolean prohibitsReservationAt(ReservationDetails details){
-        streetValidations.any { it.prohibitsReservationAt(details) }
+    boolean prohibitsReservationAt(LocalDateTimeFrame timeFrame, Location location) {
+        streetValidations.any { it.prohibitsReservationAt(timeFrame, location) }
     }
 }
 
@@ -34,19 +34,19 @@ class StreetValidation {
     }
 
 
-    boolean canParkOnLeftSideInTimeFrame(ReservationDetails details){
-        details.getLocation().isLeftSide() && allowsParkingAtHours(availableTimeFrameLeftSide, details.getTimeFrame())
+    boolean canParkOnLeftSideInTimeFrame(LocalDateTimeFrame timeFrame, Location location){
+        location.isLeftSide() && allowsParkingAtHours(availableTimeFrameLeftSide, timeFrame)
     }
 
-    boolean canParkOnRightSideInTimeFrame(ReservationDetails details){
-        details.getLocation().isRightSide() && allowsParkingAtHours(availableTimeFrameRightSide, details.getTimeFrame())
+    boolean canParkOnRightSideInTimeFrame(LocalDateTimeFrame timeFrame, Location location){
+        location.isRightSide() && allowsParkingAtHours(availableTimeFrameRightSide, timeFrame)
     }
 
-    boolean canParkInTimeFrame(ReservationDetails details) {
-        canParkOnLeftSideInTimeFrame(details) || canParkOnRightSideInTimeFrame(details)
+    boolean canParkInTimeFrame(LocalDateTimeFrame timeFrame, Location location) {
+        canParkOnLeftSideInTimeFrame(timeFrame, location) || canParkOnRightSideInTimeFrame(timeFrame, location)
     }
 
-    boolean prohibitsReservationAt(ReservationDetails details){
-        streetsToValidate.contains(details.getLocation().getStreetName()) && !canParkInTimeFrame(details)
+    boolean prohibitsReservationAt(LocalDateTimeFrame timeFrame, Location location){
+        streetsToValidate.contains(location.getStreetName()) && !canParkInTimeFrame(timeFrame, location)
     }
 }
