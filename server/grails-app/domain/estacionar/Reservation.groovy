@@ -22,17 +22,23 @@ class Reservation {
 
     static constraints = {
         timeFrame nullable: false
-        location nullable: false
+        location nullable: false, validator: {val, obj -> val.streetNumber != null && val.streetNumber > 0 && val.streetName.length() > 0}
         state nullable: false
     }
 
     static Reservation from(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator validator){
         if(validator.prohibitsReservationAt(timeFrame, location)){
-            String errMsg = String.format("Cannot reserve parking with requested location {} and timeframe {}", location, timeFrame)
+            String errMsg = String.format("No se puede reservar estacionamiento en $location.streetName $location.streetNumber en el horario pedido")
             throw new Exception(errMsg)
         }
 
         new Reservation(timeFrame: timeFrame, location: location, state: PaymentState.UNPAID)
+    }
+
+    def pay(){
+        this.state = PaymentState.PAID
+        this.save()
+        this
     }
 
     boolean isValidAt(LocalDateTime time){

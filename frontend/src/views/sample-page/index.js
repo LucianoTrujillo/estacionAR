@@ -9,6 +9,8 @@ import { API } from '../../API';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const api = new API();
 
@@ -19,6 +21,9 @@ const SamplePage = () => {
     const [endDateTime, setEndDateTime] = React.useState(new Date());
     const [street, setStreet] = React.useState('');
     const [streetNumber, setStreetNumber] = React.useState('');
+    const [alertOpen, setAlertOpen] = React.useState(false);
+    const [alertMsg, setAlertMsg] = React.useState('');
+    const [severity, setSeverity] = React.useState('success');
 
     const handleReserve = async () => {
         api.post('drivers/1/reservations', {
@@ -31,9 +36,15 @@ const SamplePage = () => {
         })
             .then((res) => {
                 console.log(res);
+                setAlertMsg('La reserva se creó correctamente');
+                setSeverity('success');
+                setAlertOpen(true);
             })
             .catch((err) => {
-                console.log(err);
+                console.log('abriendo msg de error');
+                setAlertMsg(err.toString());
+                setSeverity('error');
+                setAlertOpen(true);
             });
     };
 
@@ -47,7 +58,7 @@ const SamplePage = () => {
                                 Elegí cuando comienza la reserva
                             </Typography>
                             <DateTimePicker
-                                label="Date&Time picker"
+                                label="Fecha y hora de inicio"
                                 value={startDateTime}
                                 onChange={(val) => setStartDateTime(val)}
                                 renderInput={(params) => <TextField {...params} />}
@@ -56,7 +67,7 @@ const SamplePage = () => {
                                 Elegí cuando termina la reserva
                             </Typography>
                             <DateTimePicker
-                                label="Date&Time picker"
+                                label="Fecha y hora de fin"
                                 value={endDateTime}
                                 onChange={(val) => setEndDateTime(val)}
                                 renderInput={(params) => <TextField {...params} />}
@@ -99,6 +110,21 @@ const SamplePage = () => {
                     Reservar
                 </Button>
             </Box>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                open={alertOpen}
+                message={'I love snacks'}
+                key={'bottom left'}
+                autoHideDuration={10000}
+                onClose={() => setAlertOpen(false)}
+            >
+                <Alert elevation={6} variant="filled" severity={severity}>
+                    {alertMsg}
+                    <Button color="inherit" size="small" onClick={() => setAlertOpen(false)}>
+                        Ok
+                    </Button>
+                </Alert>
+            </Snackbar>
         </MainCard>
     );
 };

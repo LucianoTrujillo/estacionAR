@@ -10,6 +10,9 @@ class UrlMappings {
         put "/$controller/$id(.$format)?"(action:"update")
         patch "/$controller/$id(.$format)?"(action:"patch")
         "/drivers"(resources: "driver") {
+            "/reservations"(resources: "reservation") {
+                "/pay"(controller:"reservations", action:[GET: "payReservation"])
+            }
             "/reservations"(controller:"reservations", action:[POST: "createReservation", GET: "getReservationsOfDriver"])
         }
         "/"(controller: 'application', action:'index')

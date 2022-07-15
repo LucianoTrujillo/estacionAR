@@ -22,11 +22,18 @@ class ReservationsService {
                 LocalDateTime.ofInstant(Instant.parse(endTime), ZoneId.systemDefault()))
         Driver driver = Driver.get(driverId)
         Reservation reservation = driver.reserveParkingAt(timeFrame, location, parkingReservationValidator)
-        if(!reservation.save(true)) {
-            throw new Exception("Cannot save reservation")
-        }
         reservation
+    }
 
+    def payReservation(int driverId, int reservationId) {
+        Driver driver = Driver.get(driverId)
+        Reservation reservation = Reservation.get(reservationId)
+        if(!driver.hasReservation(reservation)){
+            throw new Exception("El conductor no tiene esa reserva")
+        }
+        reservation.state = Reservation.PaymentState.PAID
+        reservation.save()
+        return reservation
     }
 
 }

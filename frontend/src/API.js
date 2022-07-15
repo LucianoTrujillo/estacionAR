@@ -9,7 +9,12 @@ export class API {
                 'Content-Type': 'application/json',
                 Accept: 'application/json'
             }
-        }).then((response) => response.json());
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                console.error(error);
+                throw new Error('No se pudo comunicar con el servidor correctamente');
+            });
     }
 
     post(path, body) {
@@ -21,7 +26,20 @@ export class API {
                 Accept: 'application/json'
             },
             body: JSON.stringify(body)
-        }).then((response) => response.json());
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return response.json().then((json) => {
+                        throw json.error;
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                throw new Error(`${error}`);
+            });
     }
 
     queryString(queryParams) {

@@ -71,4 +71,23 @@ class ReservationValidatorSpec extends Specification {
         reservationCanBeMade
     }
 
+    void "rreservation can not be made if date time frame exceeds parking validator's time frame"() {
+        given: "parking validator allows to park on requested street"
+        LocalTimeFrame timeFrame = new LocalTimeFrame(
+                startTime: LocalTime.of( 0, 0),
+                endTime: LocalTime.of( 23, 0))
+        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
+        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
+
+        when: "parking validator is asked if a reservation can be made"
+        LocalDateTimeFrame timeFrameTested = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 20, 0),
+                LocalDateTime.of(2000, 1, 2, 20, 0))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt( timeFrameTested,  reservationLocation)
+
+        then:"reservation can not be made at location and time"
+        !reservationCanBeMade
+    }
+
 }
