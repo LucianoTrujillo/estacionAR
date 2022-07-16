@@ -1,6 +1,7 @@
+import * as React from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-
+import { API } from '../../../../API';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
@@ -20,10 +21,12 @@ import {
     Typography,
     useMediaQuery
 } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 
 // third party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import UserContext from '../../../../contexts/UserContext';
 
 // project imports
 import useScriptRef from 'hooks/useScriptRef';
@@ -34,7 +37,8 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import Google from 'assets/images/icons/social-google.svg';
-
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const FirebaseLogin = ({ ...others }) => {
@@ -43,22 +47,36 @@ const FirebaseLogin = ({ ...others }) => {
     const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
     const customization = useSelector((state) => state.customization);
     const [checked, setChecked] = useState(true);
+    const { currentUser, setCurrentUser } = React.useContext(UserContext);
+    const navigate = useNavigate();
+    const api = new API();
 
     const googleHandler = async () => {
         console.error('Login');
     };
 
-    const [showPassword, setShowPassword] = useState(false);
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
+    const [showlicensePlate, setShowlicensePlate] = useState(false);
+    const handleClickShowlicensePlate = () => {
+        setShowlicensePlate(!showlicensePlate);
     };
 
-    const handleMouseDownPassword = (event) => {
+    const handleMouseDownlicensePlate = (event) => {
         event.preventDefault();
+    };
+
+    const [open, setOpen] = React.useState(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
+    const handleToggle = () => {
+        setOpen(!open);
     };
 
     return (
         <>
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open} onClick={handleClose}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
             <Grid container direction="column" justifyContent="center" spacing={2}>
                 <Grid item xs={12}>
                     <AnimateButton>
@@ -113,20 +131,20 @@ const FirebaseLogin = ({ ...others }) => {
                 </Grid>
                 <Grid item xs={12} container alignItems="center" justifyContent="center">
                     <Box sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1">Sign in with Email address</Typography>
+                        <Typography variant="subtitle1">Inicia sesión con DNI y matrícula</Typography>
                     </Box>
                 </Grid>
             </Grid>
 
             <Formik
                 initialValues={{
-                    email: 'info@codedthemes.com',
-                    password: '123456',
+                    dni: '',
+                    licensePlate: '123456',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    password: Yup.string().max(255).required('Password is required')
+                    dni: Yup.string().max(255).required('dni is required'),
+                    licensePlate: Yup.string().max(255).required('licensePlate is required')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
@@ -134,6 +152,26 @@ const FirebaseLogin = ({ ...others }) => {
                             setStatus({ success: true });
                             setSubmitting(false);
                         }
+                        handleToggle();
+
+                        setTimeout(() => {
+                            api.get('drivers', values)
+                                .then((json) => {
+                                    let driver = json.find((driv) => driv.dni == values.dni);
+
+                                    if (!driver || driver.licensePlate !== values.licensePlate) {
+                                        setStatus({ success: false });
+                                        setErrors({ submit: 'No existe el usuario con esos datos' });
+                                        setSubmitting(false);
+                                    } else {
+                                        setCurrentUser(driver);
+                                        navigate('/');
+                                    }
+                                })
+                                .catch((error) => console.log('res error', error));
+
+                            handleClose();
+                        }, 1000);
                     } catch (err) {
                         console.error(err);
                         if (scriptedRef.current) {
@@ -146,57 +184,57 @@ const FirebaseLogin = ({ ...others }) => {
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>
-                        <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+                        <FormControl fullWidth error={Boolean(touched.dni && errors.dni)} sx={{ ...theme.typography.customInput }}>
+                            <InputLabel htmlFor="outlined-adornment-dni-login">dni</InputLabel>
                             <OutlinedInput
-                                id="outlined-adornment-email-login"
-                                type="email"
-                                value={values.email}
-                                name="email"
+                                id="outlined-adornment-dni-login"
+                                type="dni"
+                                value={values.dni}
+                                name="dni"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
-                                label="Email Address / Username"
+                                label="dni Address / Username"
                                 inputProps={{}}
                             />
-                            {touched.email && errors.email && (
-                                <FormHelperText error id="standard-weight-helper-text-email-login">
-                                    {errors.email}
+                            {touched.dni && errors.dni && (
+                                <FormHelperText error id="standard-weight-helper-text-dni-login">
+                                    {errors.dni}
                                 </FormHelperText>
                             )}
                         </FormControl>
 
                         <FormControl
                             fullWidth
-                            error={Boolean(touched.password && errors.password)}
+                            error={Boolean(touched.licensePlate && errors.licensePlate)}
                             sx={{ ...theme.typography.customInput }}
                         >
-                            <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
+                            <InputLabel htmlFor="outlined-adornment-licensePlate-login">Matricula</InputLabel>
                             <OutlinedInput
-                                id="outlined-adornment-password-login"
-                                type={showPassword ? 'text' : 'password'}
-                                value={values.password}
-                                name="password"
+                                id="outlined-adornment-licensePlate-login"
+                                type={showlicensePlate ? 'text' : 'licensePlate'}
+                                value={values.licensePlate}
+                                name="licensePlate"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
+                                            aria-label="toggle licensePlate visibility"
+                                            onClick={handleClickShowlicensePlate}
+                                            onMouseDown={handleMouseDownlicensePlate}
                                             edge="end"
                                             size="large"
                                         >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                                            {showlicensePlate ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                                 }
-                                label="Password"
+                                label="licensePlate"
                                 inputProps={{}}
                             />
-                            {touched.password && errors.password && (
-                                <FormHelperText error id="standard-weight-helper-text-password-login">
-                                    {errors.password}
+                            {touched.licensePlate && errors.licensePlate && (
+                                <FormHelperText error id="standard-weight-helper-text-licensePlate-login">
+                                    {errors.licensePlate}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -213,7 +251,7 @@ const FirebaseLogin = ({ ...others }) => {
                                 label="Remember me"
                             />
                             <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: 'none', cursor: 'pointer' }}>
-                                Forgot Password?
+                                Forgot licensePlate?
                             </Typography>
                         </Stack>
                         {errors.submit && (

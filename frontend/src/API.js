@@ -10,7 +10,15 @@ export class API {
                 Accept: 'application/json'
             }
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    return response.json().then((json) => {
+                        throw json.error;
+                    });
+                }
+            })
             .catch((error) => {
                 console.error(error);
                 throw new Error('No se pudo comunicar con el servidor correctamente');

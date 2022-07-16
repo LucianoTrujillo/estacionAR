@@ -4,22 +4,62 @@ import * as React from 'react';
 import { Grid } from '@mui/material';
 import { API } from '../../../API';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
-import { Typography } from '@mui/material';
 
 // project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
 import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-import TotalIncomeDarkCard from './TotalIncomeDarkCard';
-import TotalIncomeLightCard from './TotalIncomeLightCard';
-import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
 import UserContext from 'contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const api = new API();
+
+const bull = (
+    <Box component="span" sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}>
+        •
+    </Box>
+);
+
+const card = (navigate) => {
+    return (
+        <React.Fragment>
+            <CardContent sx={{ paddingBottom: 0 }}>
+                <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    Este área está muy vacía
+                </Typography>
+                <Typography
+                    sx={{
+                        mr: 1,
+                        fontSize: '1rem',
+                        fontWeight: 200
+                    }}
+                >
+                    <b>Crea algunas reservas para ver su estado en este panel</b>
+                </Typography>
+            </CardContent>
+            <CardActions>
+                <Button
+                    onClick={() => {
+                        navigate('/new-reservation');
+                    }}
+                    variant="contained"
+                    fullWidth={false}
+                    style={{ width: 250, alignSelf: 'end', boxShadow: '0px 0px 0px black' }}
+                    size="large"
+                >
+                    Reservar estacionaminto
+                </Button>
+            </CardActions>
+        </React.Fragment>
+    );
+};
 
 const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
@@ -27,17 +67,17 @@ const Dashboard = () => {
     const [reservations, setReservations] = React.useState([]);
     const navigate = useNavigate();
     useEffect(() => {
-        if (!currentUser.id) {
-            navigate('/pages/login');
+        if (!currentUser || !currentUser.id) {
+            navigate('/login');
         }
         api.get('drivers/' + currentUser.id + '/reservations')
             .then((res) => {
+                console.log('todo ok???');
                 setReservations(res);
                 setLoading(false);
             })
             .catch((err) => {
-                console.log(err);
-                setLoading(false);
+                navigate('/login');
             });
         setLoading(false);
     }, []);
@@ -57,37 +97,31 @@ const Dashboard = () => {
         console.log('updated rersr', reservations);
     }, [reservations]);
 
+    console.log('res', reservations);
     return (
         <Grid container spacing={gridSpacing}>
-            {
-                //show a cute message that says there have been no reservations created
-
-                reservations.length === 0 && (
-                    <Grid item xs={12}>
-                        <Grid container justify="center">
-                            <Grid item>
-                                <SentimentVeryDissatisfiedIcon />
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="h6">You have no reservations.</Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                )
-            }
-            {reservations.map((reservation) => (
-                <Grid key={reservation.id} item xs={24}>
-                    <Grid container spacing={gridSpacing}>
-                        <Grid item lg={24} md={24} sm={24} xs={24}>
-                            <TotalOrderLineChartCard
-                                isLoading={isLoading}
-                                reservation={reservation}
-                                onPay={() => handlePayment(reservation)}
-                            />
-                        </Grid>
-                    </Grid>
+            {reservations.length == 0 && (
+                <Grid item xs={24} display="flex" justifyContent={'center'}>
+                    <Box sx={{ width: '80%' }}>
+                        <Card variant="outlined">{card(navigate)}</Card>
+                    </Box>
                 </Grid>
-            ))}
+            )}
+            {reservations
+                ? reservations.map((reservation) => (
+                      <Grid key={reservation.id} item xs={24}>
+                          <Grid container spacing={gridSpacing}>
+                              <Grid item lg={24} md={24} sm={24} xs={24}>
+                                  <TotalOrderLineChartCard
+                                      isLoading={isLoading}
+                                      reservation={reservation}
+                                      onPay={() => handlePayment(reservation)}
+                                  />
+                              </Grid>
+                          </Grid>
+                      </Grid>
+                  ))
+                : null}
         </Grid>
     );
 };

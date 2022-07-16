@@ -21,6 +21,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import PushPinIcon from '@mui/icons-material/PushPin';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import PaidIcon from '@mui/icons-material/Paid';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import { API } from '../../../API';
 import * as React from 'react';
@@ -125,7 +126,7 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
                                                 mt: 2
                                             }}
                                         >
-                                            <PushPinIcon fontSize="inherit" />
+                                            <LocationOnIcon fontSize="inherit" />
                                         </Avatar>
                                         {reservation.state === 'PAID' ? (
                                             <Typography sx={{ fontSize: '2.125rem', fontWeight: 800, mr: 2, mt: 1.75, mb: 0.75 }}>

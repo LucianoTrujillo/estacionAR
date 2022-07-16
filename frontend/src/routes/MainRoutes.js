@@ -16,6 +16,7 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+const InspectorPage = Loadable(lazy(() => import('views/inspector-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -84,6 +85,10 @@ const MainRoutes = {
         {
             path: 'new-reservation',
             element: <SamplePage />
+        },
+        {
+            path: 'inspector',
+            element: <InspectorPage />
         }
     ]
 };

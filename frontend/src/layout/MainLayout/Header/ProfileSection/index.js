@@ -55,7 +55,7 @@ const ProfileSection = () => {
     const anchorRef = useRef(null);
     const handleLogout = async () => {
         setCurrentUser({});
-        navigate('/pages/login');
+        navigate('/login');
     };
 
     const handleClose = (event) => {

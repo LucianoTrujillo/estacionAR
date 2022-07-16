@@ -37,11 +37,17 @@ class ReservationsController {
     }
 
     def getReservationsOfDriver(int driverId) {
-        def reservations = Driver.get(driverId).reservations
-        reservations.sort {
-            a, b ->  a.timeFrame.endTime <=> b.timeFrame.endTime
+        try {
+            def reservations = Driver.get(driverId).reservations
+            reservations.sort {
+                a, b ->  a.timeFrame.endTime <=> b.timeFrame.endTime
+            }
+            respond reservations.reverse(), formats: ['json']
+        } catch (Exception e) {
+            log.error("error", e)
+            def response = '{"error": "' + "no se pudo obtener la lista de reservas del conductor" + '"}'
+            render response, status: 400
         }
-        respond reservations.reverse(), formats: ['json']
     }
 
 

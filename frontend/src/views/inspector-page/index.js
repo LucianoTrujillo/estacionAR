@@ -16,29 +16,19 @@ import { useNavigate } from 'react-router-dom';
 
 const api = new API();
 
-// ==============================|| SAMPLE PAGE ||============================== //
+// ==============================|| INSPECTOR PAGE ||============================== //
 
 const SamplePage = () => {
-    const [startDateTime, setStartDateTime] = React.useState(new Date());
-    const [endDateTime, setEndDateTime] = React.useState(new Date());
-    const [street, setStreet] = React.useState('');
-    const [streetNumber, setStreetNumber] = React.useState('');
+    const [inspectorName, setInspectorName] = React.useState('');
+    const [licensePlate, setStreetNumber] = React.useState('');
     const [alertOpen, setAlertOpen] = React.useState(false);
     const [alertMsg, setAlertMsg] = React.useState('');
     const [severity, setSeverity] = React.useState('success');
-    const { currentUser } = React.useContext(UserContext);
-    const navigate = useNavigate();
 
-    React.useEffect(() => {
-        if (!currentUser || !currentUser.id) {
-            navigate('/login');
-        }
-    }, []);
-
-    const handleReserve = async () => {
-        api.post(`drivers/${currentUser.id}/reservations`, {
-            startTime: startDateTime.toISOString(),
-            endTime: endDateTime.toISOString(),
+    const handleInspection = async () => {
+        api.get(`inspect`, {
+            license_plate: licensePlate,
+            inspector: inspectorName,
             location: {
                 streetName: street,
                 streetNumber: Number.parseInt(streetNumber, 10)
@@ -46,7 +36,7 @@ const SamplePage = () => {
         })
             .then((res) => {
                 console.log(res);
-                setAlertMsg('La reserva se creó correctamente');
+                setAlertMsg('El conductor tiene una reserva válida');
                 setSeverity('success');
                 setAlertOpen(true);
             })
