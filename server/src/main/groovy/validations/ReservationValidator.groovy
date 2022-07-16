@@ -5,18 +5,52 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.Immutable
 import groovy.transform.ToString
 import location.Location
+import street.Street
 import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
+
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit;
 
 @ToString
 @EqualsAndHashCode
 class ParkingReservationValidator {
 
-    List<StreetValidation> streetValidations
+    // guarda una lista de calles: {tipo (calle o avenida), nombre, alturas con metrovía o ciclovía, altura con carteles}
+    // encontrar la calle en donde se quiere estacionar y verificar si en esa altura se puede
+    List<Street> streets
 
+
+    boolean validTime (LocalTime time) {
+        def prohibitedStartTime = LocalTime.of(9, 0)
+        def prohibitedEndTime = LocalTime.of(21, 0)
+        time <= prohibitedStartTime || time >= prohibitedEndTime
+    }
+
+
+    boolean validTimeFrame(LocalDateTimeFrame timeFrame){
+        if (ChronoUnit.HOURS.between(timeFrame.startTime, timeFrame.endTime) > 12){
+            return false
+        }
+        validTime(timeFrame.startTime.toLocalTime()) && validTime(timeFrame.endTime.toLocalTime())
+    }
 
     boolean prohibitsReservationAt(LocalDateTimeFrame timeFrame, Location location) {
-        streetValidations.any { it.prohibitsReservationAt(timeFrame, location) }
+        Street street = streets.find { it.name == location.streetName }
+        if (street == null) {
+            return true
+        }
+
+
+        if (!street.hasSignInNumber(location.streetNumber) && (street.hasBikeLaneInNumber(location.streetNumber) || street.hasBusLaneInNumber(location.streetNumber))) {
+            return true
+        }
+        else {
+            if (street.type == Street.Type.AVENUE) {
+                return !validTimeFrame(timeFrame)
+            }
+            return false
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import grails.testing.gorm.DomainUnitTest
 import location.Location
 
 import spock.lang.Specification
+import street.Street
 import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 import validations.*
@@ -40,9 +41,9 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
                 streetName: "Siempre Viva",
                 streetNumber: 123
         )
-        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: parkingTimeFrame, availableTimeFrameLeftSide: parkingTimeFrame)
-        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
+        def street = Street.from("Siempre Viva", Street.Type.STREET);
 
+        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streets: [street])
         given: "driver has reserved parking"
         LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 0, 0),

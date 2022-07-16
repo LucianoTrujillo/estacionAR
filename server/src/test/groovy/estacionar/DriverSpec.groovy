@@ -12,8 +12,5 @@ class DriverSpec extends Specification implements DomainUnitTest<Driver> {
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == true
-    }
+
 }

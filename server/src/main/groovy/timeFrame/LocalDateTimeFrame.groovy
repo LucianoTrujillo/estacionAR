@@ -31,6 +31,11 @@ class LocalDateTimeFrame {
     boolean contains(LocalDateTime time){
         startTime <= time && endTime >= time
     }
+
+    boolean intersects(LocalDateTimeFrame range){
+        (range.startTime >= startTime && range.startTime <= endTime) ||
+        (range.endTime >= range.startTime && range.endTime <= endTime)
+    }
 }
 
 @Immutable

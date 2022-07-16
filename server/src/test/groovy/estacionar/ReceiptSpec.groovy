@@ -11,8 +11,5 @@ class ReceiptSpec extends Specification implements DomainUnitTest<Receipt> {
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
-    }
+
 }

@@ -164,7 +164,7 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
                                                         color: theme.palette.primary.mainChannel
                                                     }}
                                                 >
-                                                    <b>Precio</b> $400
+                                                    <b>Precio</b> ${reservation.price}
                                                 </Typography>
                                             </Grid>
                                             <Grid item>
@@ -196,7 +196,7 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
                                                         color: theme.palette.primary.mainChannel
                                                     }}
                                                 >
-                                                    <b>Hasta</b> {reservation.timeFrame.startTime.split('T').join(' ')}
+                                                    <b>Hasta</b> {reservation.timeFrame.endTime.split('T').join(' ')}
                                                 </Typography>
                                             </Grid>
                                         </Grid>

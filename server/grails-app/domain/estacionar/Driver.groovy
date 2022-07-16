@@ -19,6 +19,11 @@ class Driver {
     }
 
     Reservation reserveParkingAt(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator parkingValidator) {
+        // chequear si no tengo una reserva en este timeFrame (atritubte reservations). Tirar excepcionsi es el caso
+        if (reservations.find { it.timeFrame.intersects(timeFrame)}) {
+            throw new Exception("Ya tienes una reserva en este horario")
+        }
+
         Reservation reservation = Reservation.from(timeFrame, location, parkingValidator)
         reservations.add(reservation)
         reservation

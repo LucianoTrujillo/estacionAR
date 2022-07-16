@@ -11,8 +11,5 @@ class InfringementSpec extends Specification implements DomainUnitTest<Infringem
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
-    }
+
 }

@@ -9,9 +9,12 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Transactional
 class ReservationsService {
+
+    final BigDecimal PRICE_PER_MINUTES = new BigDecimal("0.5")
 
     ParkingReservationValidator parkingReservationValidator
 
@@ -31,6 +34,9 @@ class ReservationsService {
         if(!driver.hasReservation(reservation)){
             throw new Exception("El conductor no tiene esa reserva")
         }
+        // a partir de la hora actual menos la de inicio bla bla bla
+        long minutes = ChronoUnit.MINUTES.between(reservation.timeFrame.startTime, reservation.timeFrame.endTime)
+        reservation.price = new BigDecimal(minutes * PRICE_PER_MINUTES)
         reservation.state = Reservation.PaymentState.PAID
         reservation.save()
         return reservation

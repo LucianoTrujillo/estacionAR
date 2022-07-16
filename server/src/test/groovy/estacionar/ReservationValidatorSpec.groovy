@@ -3,6 +3,7 @@ package estacionar
 import location.Location
 
 import spock.lang.Specification
+import street.Street
 import timeFrame.LocalDateTimeFrame
 import timeFrame.LocalTimeFrame
 import validations.*
@@ -19,75 +20,200 @@ class ReservationValidatorSpec extends Specification {
     def cleanup() {
     }
 
-    void "reservation can be made if parking validator does not know the street"() {
+    void "reservation can be made if street does not have a buslane in the asked street number"() {
+        given: "the street asked has no buslane in the street number asked"
+        def street = Street.from("Siempre Viva", Street.Type.STREET);
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 4, 0),
+                Duration.ofMinutes(0))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanBeMade = !parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can be made at location and time"
+        reservationCanBeMade
+    }
+
+
+    void "reservation can not be made if street does have a buslane in the asked street number but not sign"() {
+        given: "the street asked has a buslane in the street number asked"
+        def street = Street.from("Siempre Viva", Street.Type.STREET);
+        street.addBusLane(100,200);
+
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 4, 0),
+                Duration.ofMinutes(0))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanNotBeMade = parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can not be made at location and time"
+        reservationCanNotBeMade
+    }
+
+
+    void "reservation can be made if street does have a buslane in the asked street number and has sign"() {
+        given: "the street asked has a buslane in the street number asked"
+        def street = Street.from("Siempre Viva", Street.Type.STREET);
+        street.addBusLane(100,200);
+        street.addSign(150,199);
+
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 4, 0),
+                Duration.ofMinutes(0))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 160)
+        boolean reservationCanBeMade = !parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can be made at location and time"
+        reservationCanBeMade
+    }
+
+
+    void "reservation can not be made if street does have a buslane in the asked street number and does not has sign in the asked address"() {
+        given: "the street asked has a buslane in the street number asked"
+        def street = Street.from("Siempre Viva", Street.Type.STREET);
+        street.addBusLane(100,200);
+        street.addSign(150,199);
+
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 4, 0),
+                Duration.ofMinutes(0))
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 120)
+        boolean reservationCanNotBeMade = parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can be made at location and time"
+        reservationCanNotBeMade
+    }
+
+
+
+    void "reservation cannot be made if parking validator does not know the street"() {
         given: "certain street is not known by parking validator"
-        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Not Siempre Viva"])
-        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
+        def street = Street.from("Siempre Viva", Street.Type.STREET);
+        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streets: [street])
 
         when: "parking validator is asked if a reservation can be made"
         LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
                 LocalDateTime.of(2000, 1, 1, 4, 0),
                 Duration.ofMinutes(0))
+        Location reservationLocation = new Location(streetName: "Not Siempre Viva", streetNumber: 123)
+        then:"reservation cannot be made at location and time"
+        boolean reservationCanNotBeMade = parkingValidator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        reservationCanNotBeMade
+    }
+
+    void "reservation cannot be made if reservation timeframe is in between the prohibited hours of an avenue (9 am - 21 pm)"() {
+        given: "the time asked is in between the prohibited hours, time being 11 am - 14 pm and the street asked is an avenue"
+        def street = Street.from("Siempre Viva", Street.Type.AVENUE);
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 11, 0),
+                LocalDateTime.of(2000, 1, 1, 14, 0))
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
         Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
-        def reservationCanBeMade = Reservation.from(timeFrame, reservationLocation, parkingValidator)
+        boolean reservationCanNotBeMade = parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can not be made at location and time"
+        reservationCanNotBeMade
+    }
+
+    void "reservation cannot be made if reservation timeframe intersects the prohibited hours of an avenue (9 am - 21 pm)"() {
+        given: "the time asked intersects the prohibited hours, time being 8 am - 14 pm and the street asked is an avenue"
+        def street = Street.from("Siempre Viva", Street.Type.AVENUE);
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 8, 0),
+                LocalDateTime.of(2000, 1, 1, 14, 0))
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanNotBeMade = parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can not be made at location and time"
+        reservationCanNotBeMade
+    }
+
+    void "reservation can be made if reservation timeframe does not intersect the prohibited hours of an avenue (9 am - 21 pm)"() {
+        given: "the time asked doesnt intersect the prohibited hours, time being 1 am - 8 am and the street asked is an avenue"
+        def street = Street.from("Siempre Viva", Street.Type.AVENUE);
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 1, 0),
+                LocalDateTime.of(2000, 1, 1, 8, 0))
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanBeMade = !parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
         then:"reservation can be made at location and time"
         reservationCanBeMade
     }
 
-    void "reservation can not be made if parking validator does not allow parking on requested street and time"() {
-        given: "street validator does NOT allow to park on requested street"
-        LocalTimeFrame timeFrame = new LocalTimeFrame(
-                startTime: LocalTime.of( 0, 0),
-                endTime: LocalTime.of( 0, 0))
-        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
-        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
+    void "reservation can be made if reservation timeframe goes from the night to the other day not intersecting the prohibited hours of an avenue (9 am - 21 pm)"() {
+        given: "the time asked doesnt intersect the prohibited hours, time being 22 pm - 3 am and the street asked is an avenue"
+        def street = Street.from("Siempre Viva", Street.Type.AVENUE);
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 22, 0),
+                LocalDateTime.of(2000, 1, 2, 3, 0))
 
         when: "parking validator is asked if a reservation can be made"
-        LocalDateTimeFrame timeFrameTested = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 4, 0),
-                Duration.ofMinutes(120))
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
         Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
-        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt(timeFrameTested, reservationLocation)
-
-        then:"reservation can not be made at location and time"
-        !reservationCanBeMade
-    }
-
-    void "reservation can be made if parking validator allows parking on requested street and time"() {
-        given: "street validator allows to park on requested street"
-        LocalTimeFrame timeFrame = new LocalTimeFrame(
-                startTime: LocalTime.of( 0, 0),
-                endTime: LocalTime.of( 23, 0))
-        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
-        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
-
-        when: "parking validator is asked if a reservation can be made"
-        LocalDateTimeFrame timeFrameTested = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 20, 0),
-                Duration.ofMinutes(30))
-        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt( timeFrameTested,  new Location(streetName: "Siempre Viva", streetNumber: 123))
+        boolean reservationCanBeMade = !parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
 
         then:"reservation can be made at location and time"
         reservationCanBeMade
     }
 
-    void "rreservation can not be made if date time frame exceeds parking validator's time frame"() {
-        given: "parking validator allows to park on requested street"
-        LocalTimeFrame timeFrame = new LocalTimeFrame(
-                startTime: LocalTime.of( 0, 0),
-                endTime: LocalTime.of( 23, 0))
-        StreetValidation streetValidation = new StreetValidation(streetsToValidate: ["Siempre Viva"], availableTimeFrameRightSide: timeFrame)
-        ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streetValidations: [streetValidation])
+    void "reservation cannot be made if reservation timeframe goes from the night to the other day intersecting the prohibited hours of an avenue (9 am - 21 pm)"() {
+        given: "the time asked does intersect the prohibited hours, time being 22 pm - 10 am and the street asked is an avenue"
+        def street = Street.from("Siempre Viva", Street.Type.AVENUE);
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 22, 0),
+                LocalDateTime.of(2000, 1, 2, 10, 0))
 
         when: "parking validator is asked if a reservation can be made"
-        LocalDateTimeFrame timeFrameTested = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 20, 0),
-                LocalDateTime.of(2000, 1, 2, 20, 0))
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
         Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
-        boolean reservationCanBeMade = !parkingValidator.prohibitsReservationAt( timeFrameTested,  reservationLocation)
+        boolean reservationCanNotBeMade = parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
 
-        then:"reservation can not be made at location and time"
-        !reservationCanBeMade
+        then:"reservation can be made at location and time"
+        reservationCanNotBeMade
     }
+
+    void "reservation cannot be made if reservation timeframe is grater than 12 hs, still not intersecting the prohibited hours(9 am - 21 pm)"() {
+        given: "the time asked doesnt intersect the prohibited hours, but its duration is longer than a day, time being 22 pm - 23 pm of the next day and the street asked is an avenue"
+        def street = Street.from("Siempre Viva", Street.Type.AVENUE);
+        LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
+                LocalDateTime.of(2000, 1, 1, 23, 0),
+                LocalDateTime.of(2000, 1, 2, 22, 0))
+
+        when: "parking validator is asked if a reservation can be made"
+        def parking_reservation_validator = new ParkingReservationValidator(streets: [street])
+        Location reservationLocation = new Location(streetName: "Siempre Viva", streetNumber: 123)
+        boolean reservationCanNotBeMade = parking_reservation_validator.prohibitsReservationAt(timeFrame, reservationLocation)
+
+        then:"reservation can be made at location and time"
+        reservationCanNotBeMade
+    }
+
+
+
+
+
+
+
 
 }

@@ -3,6 +3,9 @@ import * as React from 'react';
 // material-ui
 import { Grid } from '@mui/material';
 import { API } from '../../../API';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import { Typography } from '@mui/material';
+
 // project imports
 import EarningCard from './EarningCard';
 import PopularCard from './PopularCard';
@@ -13,6 +16,7 @@ import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from 'store/constant';
 import UserContext from 'contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
+
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const api = new API();
@@ -55,6 +59,22 @@ const Dashboard = () => {
 
     return (
         <Grid container spacing={gridSpacing}>
+            {
+                //show a cute message that says there have been no reservations created
+
+                reservations.length === 0 && (
+                    <Grid item xs={12}>
+                        <Grid container justify="center">
+                            <Grid item>
+                                <SentimentVeryDissatisfiedIcon />
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h6">You have no reservations.</Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                )
+            }
             {reservations.map((reservation) => (
                 <Grid key={reservation.id} item xs={24}>
                     <Grid container spacing={gridSpacing}>

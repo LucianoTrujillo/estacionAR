@@ -1,8 +1,7 @@
 {
-    "name": "berry-material-react-free",
+    "name": "estacionAR",
     "version": "3.2.0",
     "private": true,
-    "homepage": "https://berrydashboard.io/free",
     "engines": {
         "npm": "=6.14.17",
         "node": "=14.20.0"

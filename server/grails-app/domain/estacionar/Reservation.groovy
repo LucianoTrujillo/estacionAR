@@ -12,6 +12,7 @@ class Reservation {
     LocalDateTimeFrame timeFrame
     Location location
     PaymentState state
+    BigDecimal price
 
     static embedded = ['timeFrame', 'location']
 
@@ -32,14 +33,9 @@ class Reservation {
             throw new Exception(errMsg)
         }
 
-        new Reservation(timeFrame: timeFrame, location: location, state: PaymentState.UNPAID)
+        new Reservation(timeFrame: timeFrame, location: location, state: PaymentState.UNPAID, price: 0)
     }
 
-    def pay(){
-        this.state = PaymentState.PAID
-        this.save()
-        this
-    }
 
     boolean isValidAt(LocalDateTime time){
         this.timeFrame.contains(time)
