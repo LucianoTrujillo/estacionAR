@@ -11,6 +11,14 @@ class Location {
     String streetName
     Integer streetNumber
 
+    static Location from(String streetName, Integer streetNumber) {
+        printf("streetName %s streetNumber %s", streetName, streetNumber)
+        if(streetName == null || streetNumber == null || streetNumber < 1 || streetName.length() == 0) {
+            throw new IllegalArgumentException("la ubicación tiene que tener una calle existente y un número > 0")
+        }
+        return new Location(streetName: streetName, streetNumber: streetNumber)
+    }
+
     enum Side {
         LEFT,
         RIGHT

@@ -46,14 +46,14 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
         ParkingReservationValidator parkingValidator = new ParkingReservationValidator(streets: [street])
         given: "driver has reserved parking"
         LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 0, 0),
+                LocalDateTime.of(2023, 1, 1, 0, 0),
                 Duration.ofMinutes(30))
 
         driver.reserveParkingAt(timeFrame, new Location(streetName: "Siempre Viva", streetNumber: 123), parkingValidator)
 
         when: "when supervisor verifies reservation"
         Optional<Infringement> infringement = supervisor.createInfringementIfNoReservationFrom(driver,
-                LocalDateTime.of(2000, 1, 1, 0, 0)
+                LocalDateTime.of(2023, 1, 1, 0, 0)
                 , parkingLocation)
 
         then:"no infringement is created"
@@ -66,7 +66,7 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
         when: "supervisor validates if driver has reservation"
         Location location = new Location(streetName: "Siempre Viva", streetNumber: 123)
         Infringement infringement = supervisor.createInfringementIfNoReservationFrom(driver,
-                LocalDateTime.of(2000, 1, 1, 3, 0),
+                LocalDateTime.of(2023, 1, 1, 3, 0),
                 location).get()
 
         then:"infringement for driver is created"

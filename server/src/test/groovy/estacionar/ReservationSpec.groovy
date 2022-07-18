@@ -46,7 +46,7 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetNumber: 123
         )
         LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 4, 0),
+                LocalDateTime.of(2023, 1, 1, 4, 0),
                 Duration.ofMinutes(30))
 
         def reservation = driver.reserveParkingAt(timeFrame, reservationLocation, parkingValidator)
@@ -69,8 +69,8 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetNumber: 123
         )
         LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 4, 00),
-                LocalDateTime.of(2000, 1, 1, 4, 30))
+                LocalDateTime.of(2023, 1, 1, 4, 00),
+                LocalDateTime.of(2023, 1, 1, 4, 30))
 
 
         driver.reserveParkingAt(timeFrame, reservationLocation, parkingValidator)
@@ -78,8 +78,8 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
         given: "driver already has a reservation from 04:00AM to 04:30AM"
 
         LocalDateTimeFrame newTimeFrame = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 4, 20),
-                LocalDateTime.of(2000, 1, 1, 4, 30))
+                LocalDateTime.of(2023, 1, 1, 4, 20),
+                LocalDateTime.of(2023, 1, 1, 4, 30))
 
         when: "driver tries to make reservation from 04:20AM to 04:30AM"
         driver.reserveParkingAt(newTimeFrame, reservationLocation, parkingValidator)
@@ -103,8 +103,8 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
                 streetNumber: 123
         )
         LocalDateTimeFrame timeFrame = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 1, 4, 00),
-                LocalDateTime.of(2000, 1, 1, 4, 30))
+                LocalDateTime.of(2023, 1, 1, 4, 00),
+                LocalDateTime.of(2023, 1, 1, 4, 30))
 
 
         driver.reserveParkingAt(timeFrame, reservationLocation, parkingValidator)
@@ -112,8 +112,8 @@ class ReservationSpec extends Specification implements DomainUnitTest<Reservatio
         given: "driver already has a reservation from 04:00AM to 04:30AM in Siempre viva"
 
         LocalDateTimeFrame newTimeFrame = LocalDateTimeFrame.from(
-                LocalDateTime.of(2000, 1, 2, 4, 20),
-                LocalDateTime.of(2000, 1, 2, 4, 30))
+                LocalDateTime.of(2023, 1, 2, 4, 20),
+                LocalDateTime.of(2023, 1, 2, 4, 50))
 
         when: "driver tries to make reservation from 04:20AM to 04:30AM of the other day"
         def reservation = driver.reserveParkingAt(newTimeFrame, reservationLocation, parkingValidator)

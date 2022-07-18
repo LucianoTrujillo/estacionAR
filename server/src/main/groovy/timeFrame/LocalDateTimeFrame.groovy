@@ -17,6 +17,10 @@ class LocalDateTimeFrame {
     LocalDateTime endTime
 
     static LocalDateTimeFrame from(LocalDateTime startTime, LocalDateTime endTime) {
+        if(startTime.isAfter(endTime)) {
+            printf("startTime %s is after endTime %s", startTime, endTime)
+            throw new IllegalArgumentException("el tiempo de comienzo debe ser menor que el tiempo de fin")
+        }
         return new LocalDateTimeFrame(startTime: startTime, endTime: endTime)
     }
 
@@ -32,9 +36,14 @@ class LocalDateTimeFrame {
         startTime <= time && endTime >= time
     }
 
-    boolean intersects(LocalDateTimeFrame range){
-        (range.startTime >= startTime && range.startTime <= endTime) ||
-        (range.endTime >= range.startTime && range.endTime <= endTime)
+    Duration duration() {
+        return Duration.between(startTime, endTime)
+    }
+
+    boolean intersects(LocalDateTimeFrame frame){
+        (frame.startTime >= startTime && frame.startTime <= endTime) ||
+        (frame.endTime >= frame.startTime && frame.endTime <= endTime) ||
+                frame.contains(this)
     }
 }
 

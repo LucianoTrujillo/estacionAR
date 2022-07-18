@@ -72,7 +72,6 @@ const Dashboard = () => {
         }
         api.get('drivers/' + currentUser.id + '/reservations')
             .then((res) => {
-                console.log('todo ok???');
                 setReservations(res);
                 setLoading(false);
             })
@@ -83,14 +82,14 @@ const Dashboard = () => {
     }, []);
 
     const handlePayment = (reservation) => {
-        setReservations(
-            reservations.map((res) => {
-                if (res.id === reservation.id) {
-                    res.state = 'PAID';
-                }
-                return res;
+        api.get('drivers/' + currentUser.id + '/reservations')
+            .then((res) => {
+                setReservations(res);
+                setLoading(false);
             })
-        );
+            .catch((err) => {
+                navigate('/login');
+            });
     };
 
     React.useEffect(() => {
@@ -100,7 +99,7 @@ const Dashboard = () => {
     console.log('res', reservations);
     return (
         <Grid container spacing={gridSpacing}>
-            {reservations.length == 0 && (
+            {reservations.length === 0 && (
                 <Grid item xs={24} display="flex" justifyContent={'center'}>
                     <Box sx={{ width: '80%' }}>
                         <Card variant="outlined">{card(navigate)}</Card>

@@ -161,7 +161,6 @@ const ProfileSection = () => {
                                                     {currentUser.name}
                                                 </Typography>
                                             </Stack>
-                                            <Typography variant="subtitle2">ACA Poner si es inspector o conductor</Typography>
                                         </Stack>
                                         <Divider />
                                     </Box>

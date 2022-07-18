@@ -143,14 +143,18 @@ const FirebaseRegister = ({ ...others }) => {
                         setTimeout(() => {
                             api.post('drivers', values)
                                 .then((json) => {
-                                    if (!json.id) {
+                                    if (!json || !json.id) {
+                                        setStatus({ success: false });
                                         setErrors({ submit: 'Un usuario ya ha sido creado con ese DNI' });
                                     } else {
                                         setCurrentUser(json);
                                         navigate('/');
                                     }
                                 })
-                                .catch((error) => console.log('res error', error));
+                                .catch((error) => {
+                                    setStatus({ success: false });
+                                    setErrors({ submit: 'No se puede crear el usuario con esos datos' });
+                                });
 
                             handleClose();
                         }, 1000);
@@ -166,6 +170,8 @@ const FirebaseRegister = ({ ...others }) => {
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>
+                        {errors && console.log(errors)}
+
                         <FormControl fullWidth error={Boolean(touched.name && errors.name)} sx={{ ...theme.typography.customInput }}>
                             <InputLabel htmlFor="name">Name</InputLabel>
                             <OutlinedInput
@@ -219,6 +225,7 @@ const FirebaseRegister = ({ ...others }) => {
                                 </FormHelperText>
                             )}
                         </FormControl>
+                        {errors && console.log(errors)}
 
                         <Grid container alignItems="center" justifyContent="space-between">
                             <Grid item>
@@ -242,6 +249,7 @@ const FirebaseRegister = ({ ...others }) => {
                                 />
                             </Grid>
                         </Grid>
+                        {errors && console.log(errors)}
                         {errors.submit && (
                             <Box sx={{ mt: 3 }}>
                                 <FormHelperText error>{errors.submit}</FormHelperText>

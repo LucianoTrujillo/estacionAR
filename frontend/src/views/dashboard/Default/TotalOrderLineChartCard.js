@@ -27,6 +27,7 @@ import { API } from '../../../API';
 import * as React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import UserContext from '../../../contexts/UserContext';
 const api = new API();
 
 const CardWrapper = styled(MainCard)(({ theme, bgColor, color }) => ({
@@ -80,9 +81,10 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
     const [alertOpen, setAlertOpen] = React.useState(false);
     const [alertMsg, setAlertMsg] = React.useState('');
     const [severity, setSeverity] = React.useState('success');
+    const { currentUser, setCurrentUser } = React.useContext(UserContext);
 
     const handlePayment = () => {
-        api.get('drivers/1/reservations/' + reservation.id + '/pay')
+        api.get('drivers/' + currentUser.id + '/reservations/' + reservation.id + '/pay')
             .then((res) => {
                 console.log(res);
 

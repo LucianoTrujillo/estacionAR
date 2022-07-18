@@ -3,13 +3,11 @@
 
 import street.Street
 import validations.ParkingReservationValidator
-import java.time.LocalTime
-import timeFrame.LocalTimeFrame
 
 
 beans = {
     parkingReservationValidator(ParkingReservationValidator) {
-        def street = Street.from("libertador", Street.Type.STREET)
+        def street = Street.from("libertador", Street.Type.AVENUE)
         street.addBusLane(100, 200)
         street.addSign(150, 300)
         streets = [

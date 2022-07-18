@@ -157,7 +157,7 @@ const FirebaseLogin = ({ ...others }) => {
                         setTimeout(() => {
                             api.get('drivers', values)
                                 .then((json) => {
-                                    let driver = json.find((driv) => driv.dni == values.dni);
+                                    let driver = json.find((driv) => driv.dni === values.dni);
 
                                     if (!driver || driver.licensePlate !== values.licensePlate) {
                                         setStatus({ success: false });
@@ -168,7 +168,11 @@ const FirebaseLogin = ({ ...others }) => {
                                         navigate('/');
                                     }
                                 })
-                                .catch((error) => console.log('res error', error));
+                                .catch((error) => {
+                                    setStatus({ success: false });
+                                    setErrors({ submit: 'Hubo un error al tratar de inciar sesión' });
+                                    setSubmitting(false);
+                                });
 
                             handleClose();
                         }, 1000);

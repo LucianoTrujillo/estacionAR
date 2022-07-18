@@ -19,21 +19,35 @@ class ReservationsController {
        try {
            String startTime = body["startTime"] as String
            String endTime = body["endTime"] as String
-           Location location = new Location(body["location"] as Map)
+           Location location = Location.from(body["location"]["streetName"] as String, body["location"]["streetNumber"]  as Integer)
            def reservation = reservationsService.createReservation(driverId, startTime, endTime, location)
            respond reservation, formats: ['json']
         }
         catch (Exception e) {
+            String errMsg = ""
+            if (e instanceof Reservation.InvalidReservationException || e instanceof IllegalArgumentException) {
+                errMsg = e.getMessage()
+            }
+            else {
+                errMsg = "Algún dato no tiene formato o correcto o está vacío"
+            }
             log.error("error", e)
-            def response = '{"error": "' + "no se pudo crear la reserva, revise los datos" + '"}'
+            def response = '{"error": "' + errMsg + '"}'
             render response, status: 400
         }
     }
 
 
     def payReservation(int driverId, int reservationId) {
-        def reservation = reservationsService.payReservation(driverId, reservationId)
-        respond reservation, formats: ['json']
+        try {
+            def reservation = reservationsService.payReservation(driverId, reservationId)
+            respond reservation, formats: ['json']
+        } catch (Exception e) {
+            log.error("error", e)
+            def response = '{"error": "' + e.getMessage() + '"}'
+            render response, status: 400
+        }
+
     }
 
     def getReservationsOfDriver(int driverId) {

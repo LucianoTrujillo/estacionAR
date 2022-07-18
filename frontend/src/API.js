@@ -21,7 +21,7 @@ export class API {
             })
             .catch((error) => {
                 console.error(error);
-                throw new Error('No se pudo comunicar con el servidor correctamente');
+                throw new Error(`${error}`);
             });
     }
 
