@@ -1,8 +1,11 @@
 package estacionar
 
+import grails.rest.Resource
 import location.Location
 
 import java.time.LocalDateTime
+import grails.rest.*
+@Resource(uri='/inspectors')
 
 class Inspector {
 

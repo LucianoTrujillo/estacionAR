@@ -15,6 +15,9 @@ class UrlMappings {
             }
             "/reservations"(controller:"reservations", action:[POST: "createReservation", GET: "getReservationsOfDriver"])
         }
+        "/inspectors"(resources: "inspector") {
+            "/inspect"(controller:"inspectors", action:[GET: "inspect"])
+        }
         "/"(controller: 'application', action:'index')
         "500"(view: '/error')
         "404"(view: '/notFound')

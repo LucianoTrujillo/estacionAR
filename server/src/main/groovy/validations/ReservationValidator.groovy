@@ -22,14 +22,14 @@ class ParkingReservationValidator {
 
 
     boolean validTime (LocalTime time) {
-        def prohibitedStartTime = LocalTime.of(9, 0)
+        def prohibitedStartTime = LocalTime.of(7, 0)
         def prohibitedEndTime = LocalTime.of(21, 0)
         time <= prohibitedStartTime || time >= prohibitedEndTime
     }
 
 
-    boolean validTimeFrame(LocalDateTimeFrame timeFrame){
-        if (ChronoUnit.HOURS.between(timeFrame.startTime, timeFrame.endTime) > 12){
+    boolean validAvenueTimeFrame(LocalDateTimeFrame timeFrame){
+        if (ChronoUnit.HOURS.between(timeFrame.startTime, timeFrame.endTime) > 10){
             return false
         }
         validTime(timeFrame.startTime.toLocalTime()) && validTime(timeFrame.endTime.toLocalTime())
@@ -47,7 +47,7 @@ class ParkingReservationValidator {
         }
         else {
             if (street.type == Street.Type.AVENUE) {
-                return !validTimeFrame(timeFrame)
+                return !validAvenueTimeFrame(timeFrame)
             }
             return false
         }

@@ -15,7 +15,7 @@ class Driver {
     static constraints = {
         name blank: false, nullable: false
         dni blank: false, nullable: false, unique: true
-        licensePlate blank: false, nullable: false,  validator: {val, obj -> val ==~ /[A-Z]{2}\s\d{3}\s[A-Z]{2}/}
+        licensePlate blank: false, nullable: false,  validator: {val, obj -> val ==~ /[A-Z]{2}\s\d{3}\s[A-Z]{2}/ || val ==~ /[A-Z]{3}\s\d{3}/ }
     }
 
     Reservation reserveParkingAt(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator parkingValidator) {

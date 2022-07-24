@@ -13,8 +13,6 @@ beans = {
         streets = [
                   street
         ]
-
-
     }
 
 }
