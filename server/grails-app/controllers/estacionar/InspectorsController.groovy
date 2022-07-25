@@ -12,20 +12,17 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class InspectorsController {
-	static responseFormats = ['json', 'xml']
-    static allowedMethods = [index: 'GET', test: 'GET', inspect: 'GET']
 
     InspectorService inspectorService
 
-    def inspect(int inspectorId, String streetName, int streetNumber, String licensePlate) {
-        Location location = Location.from(streetName, streetNumber)
+    def inspect(int inspectorId, Location location, String licensePlate) {
         Optional<Infringement> result = inspectorService.createInfringementIfNoReservationFrom(licensePlate, inspectorId, location)
-        if(result.isEmpty()) {
-            def response = '{"status": "' + "SUCCESS" + '"}'
-            render response, status: 200
+        if(result.isPresent()) {
+            respond result.get(), formats: ['json']
         }
         else {
-            respond result.get(), formats: ['json']
+            def response = '{"status": "' + "SUCCESS" + '"}'
+            render response, status: 200
         }
     }
 

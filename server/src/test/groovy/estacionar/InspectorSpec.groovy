@@ -34,9 +34,6 @@ class InspectorSpec extends Specification implements DomainUnitTest<Inspector> {
     }
 
     void "supervisor does not create infringement if driver has valid reservation"() {
-        LocalTimeFrame parkingTimeFrame = new LocalTimeFrame(
-                startTime: LocalTime.of(0, 0),
-                endTime: LocalTime.of(5, 0))
         Location parkingLocation = new Location(
                 streetName: "Siempre Viva",
                 streetNumber: 123

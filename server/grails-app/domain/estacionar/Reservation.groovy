@@ -36,24 +36,20 @@ class Reservation {
 
     static constraints = {
         timeFrame nullable: false
-        location nullable: false, validator: {val, obj -> val.streetNumber != null && val.streetNumber > 0 && val.streetName.length() > 0}
+        location nullable: false, validator: {val, obj -> validLocation(val)}
         state nullable: false
     }
 
+    static boolean validLocation(Location location) {
+        return location.streetNumber != null && location.streetNumber > 0 && location.streetName.length() > 0
+    }
+
     static Reservation from(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator validator, String licensePlate){
-        if(timeFrame.startTime < LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)){
-            throw new InvalidReservationException("no puedes reservar un estacionamiento en tiempo pasado")
-        }
 
-        if(validator.prohibitsReservationAt(timeFrame, location)){
-            String errMsg = String.format("No se puede reservar estacionamiento en $location.streetName $location.streetNumber en el horario pedido")
-            throw new InvalidReservationException(errMsg)
+        def validation = validator.validate(timeFrame, location)
+        if(validation.isFailure()){
+            throw new InvalidReservationException(validation.message)
         }
-
-        if(timeFrame.duration() < Duration.ofMinutes(30)){
-            throw new InvalidReservationException("La duración de la reserva debe ser mayor a 30 minutos")
-        }
-
 
         new Reservation(
                 timeFrame: timeFrame,

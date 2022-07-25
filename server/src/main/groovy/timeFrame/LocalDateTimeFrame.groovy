@@ -33,7 +33,7 @@ class LocalDateTimeFrame {
     }
 
     boolean contains(LocalDateTime time){
-        startTime <= time && endTime >= time
+         time >= startTime && time <= endTime
     }
 
     Duration duration() {
@@ -41,25 +41,8 @@ class LocalDateTimeFrame {
     }
 
     boolean intersects(LocalDateTimeFrame frame){
-        (frame.startTime >= startTime && frame.startTime <= endTime) ||
-        (frame.endTime >= frame.startTime && frame.endTime <= endTime) ||
+        contains(frame.startTime) ||
+        contains(frame.endTime) ||
                 frame.contains(this)
-    }
-}
-
-@Immutable
-@ToString
-@EqualsAndHashCode
-class LocalTimeFrame {
-
-    LocalTime startTime
-    LocalTime endTime
-
-    boolean contains(LocalTimeFrame range){
-        startTime <= range.startTime && endTime >= range.endTime
-    }
-
-    boolean contains(LocalTime time){
-        startTime <= time && endTime >= time
     }
 }

@@ -50,15 +50,15 @@ class Street {
     }
 
     boolean hasBikeLaneInNumber(int streetNumber){
-        bikeLanes.any { streetNumber >= it[0] && streetNumber <= it[1] }
+        bikeLanes != null && bikeLanes.any { streetNumber >= it[0] && streetNumber <= it[1] }
     }
 
     boolean hasBusLaneInNumber(int streetNumber){
-        busLanes.any { streetNumber >= it[0] && streetNumber <= it[1] }
+        busLanes != null && busLanes.any { streetNumber >= it[0] && streetNumber <= it[1] }
     }
 
     boolean hasSignInNumber(int streetNumber){
-        signs.any { streetNumber >= it[0] && streetNumber <= it[1] }
+        signs != null && signs.any { streetNumber >= it[0] && streetNumber <= it[1] }
     }
 
 

@@ -13,22 +13,28 @@ import java.time.temporal.ChronoUnit
 
 import estacionar.Receipt
 
+
+class ReservationDetails {
+    String startTime
+    String endTime
+    Location location
+}
+
 @Transactional
 class ReservationsService {
 
     ParkingReservationValidator parkingReservationValidator
 
-    def createReservation(int driverId, String startTime, String endTime, Location location) {
+    Reservation createReservation(int driverId, ReservationDetails details) {
 
         LocalDateTimeFrame timeFrame =  LocalDateTimeFrame.from(
-                LocalDateTime.ofInstant(Instant.parse(startTime), ZoneId.systemDefault()).truncatedTo(ChronoUnit.MINUTES),
-                LocalDateTime.ofInstant(Instant.parse(endTime), ZoneId.systemDefault()).truncatedTo(ChronoUnit.MINUTES))
+                LocalDateTime.ofInstant(Instant.parse(details.startTime), ZoneId.systemDefault()).truncatedTo(ChronoUnit.MINUTES),
+                LocalDateTime.ofInstant(Instant.parse(details.endTime), ZoneId.systemDefault()).truncatedTo(ChronoUnit.MINUTES))
         Driver driver = Driver.get(driverId)
-        Reservation reservation = driver.reserveParkingAt(timeFrame, location, parkingReservationValidator)
-        reservation
+        driver.reserveParkingAt(timeFrame, details.location, parkingReservationValidator)
     }
 
-    def payReservation(int driverId, int reservationId) {
+    Receipt payReservation(int driverId, int reservationId) {
         Driver driver = Driver.get(driverId)
         Reservation reservation = Reservation.get(reservationId)
         if(!driver.hasReservation(reservation)){
@@ -43,10 +49,18 @@ class ReservationsService {
         reservation.price = new BigDecimal(minutes * Reservation.PRICE_PER_MINUTES)
         reservation.state = Reservation.PaymentState.PAID
         reservation.timeFrame.endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
-        reservation.save()
         Receipt receipt = new Receipt(driverId: driverId, reservationId: reservationId)
+        reservation.save()
         receipt.save()
         return receipt
+    }
+
+    List<Reservation> getDriverReservations(int driverId) {
+        def reservations = Driver.get(driverId).reservations
+        reservations.sort {
+            a, b ->  a.timeFrame.endTime <=> b.timeFrame.endTime
+        }
+        return reservations.reverse()
     }
 
 }

@@ -2,26 +2,41 @@ package validations
 
 
 import groovy.transform.EqualsAndHashCode
-import groovy.transform.Immutable
 import groovy.transform.ToString
 import location.Location
 import street.Street
 import timeFrame.LocalDateTimeFrame
-import timeFrame.LocalTimeFrame
 
+import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit;
+
+class Validation {
+    Status status
+    String message
+
+    enum Status {
+        SUCCESS,
+        ERROR
+    }
+
+    boolean isFailure() {
+        return status == Status.ERROR
+    }
+
+    boolean isSuccess() {
+        return status == Status.SUCCESS
+    }
+}
 
 @ToString
 @EqualsAndHashCode
 class ParkingReservationValidator {
 
-    // guarda una lista de calles: {tipo (calle o avenida), nombre, alturas con metrovía o ciclovía, altura con carteles}
-    // encontrar la calle en donde se quiere estacionar y verificar si en esa altura se puede
     List<Street> streets
 
-
-    boolean validTime (LocalTime time) {
+    boolean validAvenueTimeFrame(LocalTime time) {
         def prohibitedStartTime = LocalTime.of(7, 0)
         def prohibitedEndTime = LocalTime.of(21, 0)
         time <= prohibitedStartTime || time >= prohibitedEndTime
@@ -32,55 +47,45 @@ class ParkingReservationValidator {
         if (ChronoUnit.HOURS.between(timeFrame.startTime, timeFrame.endTime) > 10){
             return false
         }
-        validTime(timeFrame.startTime.toLocalTime()) && validTime(timeFrame.endTime.toLocalTime())
+        validAvenueTimeFrame(timeFrame.startTime.toLocalTime()) && validAvenueTimeFrame(timeFrame.endTime.toLocalTime())
     }
 
-    boolean prohibitsReservationAt(LocalDateTimeFrame timeFrame, Location location) {
+
+    Validation validate(LocalDateTimeFrame timeFrame, Location location) {
+        if(timeFrame.startTime < LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)){
+            return failedValidation("no puedes reservar un estacionamiento cuyo inicio está en el pasado")
+        }
+
+        if(timeFrame.duration() < Duration.ofMinutes(10)){
+            return failedValidation("la duración de la reserva debe ser mayor a 10 minutos")
+        }
+
+        if(location.streetName == null || location.streetNumber == null || location.streetNumber < 1 || location.streetName.length() == 0) {
+            return failedValidation("la ubicación tiene que tener una calle y una altura mayor que 0")
+        }
+
         Street street = streets.find { it.name == location.streetName }
         if (street == null) {
-            return true
+            return failedValidation("La calle ingresada no se encuentra en el sistema")
         }
 
 
         if (!street.hasSignInNumber(location.streetNumber) && (street.hasBikeLaneInNumber(location.streetNumber) || street.hasBusLaneInNumber(location.streetNumber))) {
-            return true
+            return failedValidation("En la ubicación " + location.streetName + " " + location.streetNumber + " se encuentra una ciclovía o metrobus y no hay cartel que permita estacionar")
         }
-        else {
-            if (street.type == Street.Type.AVENUE) {
-                return !validAvenueTimeFrame(timeFrame)
-            }
-            return false
+
+        if (street.type == Street.Type.AVENUE && !validAvenueTimeFrame(timeFrame)) {
+                return failedValidation("En la avenida " + location.streetName + " no se puede estacionar de 7 AM a 21 PM")
         }
-    }
-}
 
-@Immutable
-@ToString
-@EqualsAndHashCode
-class StreetValidation {
-    List<String> streetsToValidate
-    LocalTimeFrame availableTimeFrameRightSide
-    LocalTimeFrame availableTimeFrameLeftSide
-
-    boolean allowsParkingAtHours(LocalTimeFrame availableTimeFrame, LocalDateTimeFrame requestedTimeFrame){
-        availableTimeFrame.startTime <= requestedTimeFrame.startTime.toLocalTime() &&
-        availableTimeFrame.endTime >= requestedTimeFrame.endTime.toLocalTime()
+        succeedsValidation()
     }
 
-
-    boolean canParkOnLeftSideInTimeFrame(LocalDateTimeFrame timeFrame, Location location){
-        location.isLeftSide() && allowsParkingAtHours(availableTimeFrameLeftSide, timeFrame)
+    static Validation failedValidation(String errMsg) {
+        new Validation(status: Validation.Status.ERROR, message: errMsg)
     }
 
-    boolean canParkOnRightSideInTimeFrame(LocalDateTimeFrame timeFrame, Location location){
-        location.isRightSide() && allowsParkingAtHours(availableTimeFrameRightSide, timeFrame)
-    }
-
-    boolean canParkInTimeFrame(LocalDateTimeFrame timeFrame, Location location) {
-        canParkOnLeftSideInTimeFrame(timeFrame, location) || canParkOnRightSideInTimeFrame(timeFrame, location)
-    }
-
-    boolean prohibitsReservationAt(LocalDateTimeFrame timeFrame, Location location){
-        streetsToValidate.contains(location.getStreetName()) && !canParkInTimeFrame(timeFrame, location)
+    static Validation succeedsValidation() {
+        new Validation(status: Validation.Status.SUCCESS)
     }
 }

@@ -15,12 +15,16 @@ class Driver {
     static constraints = {
         name blank: false, nullable: false
         dni blank: false, nullable: false, unique: true
-        licensePlate blank: false, nullable: false,  validator: {val, obj -> val ==~ /[A-Z]{2}\s\d{3}\s[A-Z]{2}/ || val ==~ /[A-Z]{3}\s\d{3}/ }
+        licensePlate blank: false, nullable: false,  validator: {val, obj -> validLicensePlate(val) }
+    }
+
+    static boolean validLicensePlate(String licensePlate) {
+        return licensePlate ==~ /[A-Z]{2}\s\d{3}\s[A-Z]{2}/ || licensePlate ==~ /[A-Z]{3}\s\d{3}/
     }
 
     Reservation reserveParkingAt(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator parkingValidator) {
-        if (reservations.find { it.timeFrame.intersects(timeFrame)}) {
-            throw new Reservation.InvalidReservationException("Ya tienes una reserva en este horario")
+        if (reservations.find { it.timeFrame.intersects(timeFrame) && it.state == Reservation.PaymentState.UNPAID }) {
+            throw new Reservation.InvalidReservationException("Ya tienes una reserva activa en este horario")
         }
 
         Reservation reservation = Reservation.from(timeFrame, location, parkingValidator, licensePlate)

@@ -1,8 +1,6 @@
 package estacionar
 
-import grails.rest.Resource
 import location.Location
-
 import java.time.LocalDateTime
 import grails.rest.*
 @Resource(uri='/inspectors')
@@ -18,7 +16,6 @@ class Inspector {
     private boolean driverHasReservation(Driver driver, LocalDateTime time, Location parkingLocation){
         driver.reservations.any {it.isValidAt(time) && it.isValidIn(parkingLocation)}
     }
-
 
     Optional<Infringement> createInfringementIfNoReservationFrom(Driver driver, LocalDateTime time, Location parkingLocation) {
         if (driverHasReservation(driver, time, parkingLocation) ) {
