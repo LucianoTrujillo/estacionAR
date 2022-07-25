@@ -91,7 +91,6 @@ const Dashboard = () => {
                 navigate('/login');
             });
     };
-
     React.useEffect(() => {
         console.log('updated rersr', reservations);
     }, [reservations]);

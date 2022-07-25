@@ -28,6 +28,8 @@ import * as React from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import UserContext from '../../../contexts/UserContext';
+import Modal from '@mui/material/Modal';
+import logo from "../../../assets/images/icon.svg";
 const api = new API();
 
 const CardWrapper = styled(MainCard)(({ theme, bgColor, color }) => ({
@@ -72,6 +74,18 @@ const CardWrapper = styled(MainCard)(({ theme, bgColor, color }) => ({
     }
 }));
 
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4
+};
+
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
 const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
@@ -82,11 +96,24 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
     const [alertMsg, setAlertMsg] = React.useState('');
     const [severity, setSeverity] = React.useState('success');
     const { currentUser, setCurrentUser } = React.useContext(UserContext);
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => {
+        api.get('drivers/' + currentUser.id + '/reservations/' + reservation.id + '/receipt').then((res) => {
+            setReceipt({
+                receiptId: res.receipt.id
+            });
+            setOpen(true);
+        });
+    };
+    const handleClose = () => setOpen(false);
+    const [receipt, setReceipt] = React.useState(null);
 
     const handlePayment = () => {
         api.get('drivers/' + currentUser.id + '/reservations/' + reservation.id + '/pay')
             .then((res) => {
                 console.log(res);
+
+                setReceipt(res);
 
                 setAlertMsg('El pago se realizó correctamente');
                 setSeverity('success');
@@ -149,6 +176,69 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
                                                 onClick={(e) => handlePayment()}
                                             >
                                                 Pagar
+                                            </Button>
+                                        </Grid>
+                                    )}
+                                    {reservation.state === 'PAID' && (
+                                        <Grid item>
+                                            <div>
+                                                {receipt && <Modal
+                                                    open={open}
+                                                    onClose={handleClose}
+                                                    aria-labelledby="modal-modal-title"
+                                                    aria-describedby="modal-modal-description"
+                                                >
+                                                    <Box sx={style}>
+                                                        <Typography id="modal-modal-title" variant="h6" component="h2"
+                                                            sx={{
+                                                            mr: 1,
+                                                            fontSize: '1rem',
+                                                            fontWeight: 300,
+                                                            color: theme.palette.primary.mainChannel
+                                                            }}
+                                                        >
+                                                            <b>EstacionAR - Comprobante de pago</b>
+                                                        </Typography>
+                                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                            Número de recibo: <b>#{receipt.receiptId}</b>
+                                                    </Typography>
+                                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                            Número de patente: <b>{reservation.licensePlateOfDriver}</b>
+                                                        </Typography>
+                                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                            Ubicación: <b>{reservation.location.streetName} {reservation.location.streetNumber} </b>
+                                                        </Typography>
+                                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                            Desde <b>{reservation.timeFrame.startTime.split('T').join(' ')}</b>
+                                                        </Typography>
+                                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                            Hasta <b>{reservation.timeFrame.endTime.split('T').join(' ')}</b>
+                                                        </Typography>
+                                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                            Importe: <b>${reservation.price}</b>
+                                                    </Typography>
+                                                        <Button
+                                                            variant={!timeValue ? 'contained' : 'text'}
+                                                            size="small"
+                                                            sx={{
+                                                                color: theme.palette.action.active,
+                                                                left: 250,
+                                                                margin: 0
+                                                            }}
+                                                            onClick={(e) => window.print()}
+                                                        >
+                                                            Imprimir
+                                                        </Button>
+                                                    </Box>
+                                                </Modal>}
+                                            </div>
+                                            <Button
+                                                onClick={handleOpen}
+                                                variant={!timeValue ? 'contained' : 'text'}
+                                                size="small"
+                                                sx={{ color: theme.palette.action.active }}
+                                            >
+                                                Ver Comprobante
                                             </Button>
                                         </Grid>
                                     )}

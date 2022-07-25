@@ -87,6 +87,10 @@ const MainRoutes = {
             element: <SamplePage />
         },
         {
+            path: 'proofOfPayment',
+            element: <SamplePage />
+        },
+        {
             path: 'inspector',
             element: <InspectorPage />
         }

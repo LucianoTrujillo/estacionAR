@@ -11,6 +11,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
+import estacionar.Receipt
+
 @Transactional
 class ReservationsService {
 
@@ -42,7 +44,9 @@ class ReservationsService {
         reservation.state = Reservation.PaymentState.PAID
         reservation.timeFrame.endTime = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)
         reservation.save()
-        return reservation
+        Receipt receipt = new Receipt(driverId: driverId, reservationId: reservationId)
+        receipt.save()
+        return receipt
     }
 
 }

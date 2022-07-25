@@ -4,7 +4,7 @@ import location.Location
 
 class ReservationsController {
 	static responseFormats = ['json', 'xml']
-    static allowedMethods = [index: 'GET', test: 'GET', createReservation: 'POST', getReservationsOfDriver: 'GET']
+    static allowedMethods = [index: 'GET', test: 'GET', createReservation: 'POST', getReservationsOfDriver: 'GET', getReceiptOfReservation: 'GET']
 
     ReservationsService reservationsService
 
@@ -62,6 +62,14 @@ class ReservationsController {
             def response = '{"error": "' + "no se pudo obtener la lista de reservas del conductor" + '"}'
             render response, status: 400
         }
+    }
+
+    def getReceipt(int driverId, int reservationId) {
+        def responseData = [
+                'reservation': Reservation.get(reservationId),
+                'receipt': Receipt.findByReservationId(reservationId)
+        ]
+        render responseData as grails.converters.JSON
     }
 
 

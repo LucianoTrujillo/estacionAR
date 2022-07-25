@@ -23,7 +23,7 @@ class Driver {
             throw new Reservation.InvalidReservationException("Ya tienes una reserva en este horario")
         }
 
-        Reservation reservation = Reservation.from(timeFrame, location, parkingValidator)
+        Reservation reservation = Reservation.from(timeFrame, location, parkingValidator, licensePlate)
         reservations.add(reservation)
         reservation
     }

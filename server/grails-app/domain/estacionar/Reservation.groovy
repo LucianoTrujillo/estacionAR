@@ -16,6 +16,7 @@ class Reservation {
     Location location
     PaymentState state
     BigDecimal price
+    String licensePlateOfDriver
 
     static final BigDecimal PRICE_PER_MINUTES = new BigDecimal("2")
 
@@ -39,7 +40,7 @@ class Reservation {
         state nullable: false
     }
 
-    static Reservation from(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator validator){
+    static Reservation from(LocalDateTimeFrame timeFrame, Location location, ParkingReservationValidator validator, String licensePlate){
         if(timeFrame.startTime < LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)){
             throw new InvalidReservationException("no puedes reservar un estacionamiento en tiempo pasado")
         }
@@ -58,7 +59,8 @@ class Reservation {
                 timeFrame: timeFrame,
                 location: location,
                 state: PaymentState.UNPAID,
-                price: timeFrame.duration().toMinutes() * PRICE_PER_MINUTES)
+                price: timeFrame.duration().toMinutes() * PRICE_PER_MINUTES,
+                licensePlateOfDriver: licensePlate)
     }
 
 

@@ -12,6 +12,7 @@ class UrlMappings {
         "/drivers"(resources: "driver") {
             "/reservations"(resources: "reservation") {
                 "/pay"(controller:"reservations", action:[GET: "payReservation"])
+                "/receipt"(controller:"reservations", action:[GET: "getReceipt"])
             }
             "/reservations"(controller:"reservations", action:[POST: "createReservation", GET: "getReservationsOfDriver"])
         }

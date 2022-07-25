@@ -7,7 +7,7 @@ import validations.ParkingReservationValidator
 
 beans = {
     parkingReservationValidator(ParkingReservationValidator) {
-        def street = Street.from("libertador", Street.Type.AVENUE)
+        def street = Street.from("libertador", Street.Type.STREET)
         street.addBusLane(100, 200)
         street.addSign(150, 300)
         streets = [
