@@ -224,7 +224,7 @@ const TotalOrderLineChartCard = ({ isLoading, reservation, onPay }) => {
                   )}
                   {reservation.state === "PAID" && (
                     <Grid item>
-                      <div id="section-to-print">
+                      <div >
                         {receipt && (
                           <Modal
 
